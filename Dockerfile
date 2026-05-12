@@ -16,5 +16,6 @@ COPY --chmod=775 start.sh /
 
 WORKDIR /ex_app/lib
 ENTRYPOINT ["/start.sh", "python3", "main.py"]
-# start-period: allow pip/import + uvicorn bind before failures count
-HEALTHCHECK --interval=5s --timeout=5s --start-period=40s --retries=12 CMD /healthcheck.sh
+# No Docker HEALTHCHECK: AppAPI only waits for this if the image defines one; a bad probe
+# blocks deploy with "Container healthcheck failed". AppAPI then uses GET /heartbeat instead.
+# Optional: docker run --health-cmd=/healthcheck.sh ... if you want engine-level checks.
