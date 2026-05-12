@@ -385,7 +385,9 @@ async def lifespan(app: FastAPI):
 
 
 APP = FastAPI(lifespan=lifespan)
-APP.add_middleware(AppAPIAuthMiddleware)
+# Public probes: /heartbeat is registered by set_handlers() and always exempt.
+# Also exempt /health so Docker or admins can curl it without AppAPI headers.
+APP.add_middleware(AppAPIAuthMiddleware, disable_for=["health"])
 
 
 @APP.get("/")
