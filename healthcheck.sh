@@ -1,11 +1,15 @@
-#!/bin/sh
+#!/bin/bash
+# Match Nextcloud Python ExApp skeleton: with HaRP, frpc must be running.
+# Without HaRP, probe /heartbeat over TCP (nc_py_api exempts it from AppAPI auth).
+
 set -e
-# When HP_SHARED_KEY is set, nc_py_api run_app() listens on a Unix socket only (no TCP).
-# Otherwise it binds to APP_HOST:APP_PORT.
-# /heartbeat is always exempt from AppAPIAuthMiddleware.
-if [ -n "$HP_SHARED_KEY" ]; then
-  SOCK="${HP_EXAPP_SOCK:-/tmp/exapp.sock}"
-  curl -fsS --unix-socket "$SOCK" "http://localhost/heartbeat" > /dev/null
-else
-  curl -fsS "http://127.0.0.1:${APP_PORT:-8000}/heartbeat" > /dev/null
+
+if [ -f /frpc.toml ] && [ -n "$HP_SHARED_KEY" ]; then
+  if pgrep -x "frpc" > /dev/null; then
+    exit 0
+  else
+    exit 1
+  fi
 fi
+
+curl -fsS "http://127.0.0.1:${APP_PORT:-8000}/heartbeat" > /dev/null
