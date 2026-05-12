@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<info>
+	<id>expense-report</id>
+	<name>Expense Report</name>
+	<summary>Render yearly expense report in Nextcloud UI</summary>
+	<description>
+	<![CDATA[External app that renders an interactive expense report page from Nextcloud Tables data.]]>
+	</description>
+	<version>1.0.0</version>
+	<licence>MIT</licence>
+	<author>Yariv</author>
+	<namespace>PyAppV2_expense_report</namespace>
+	<category>tools</category>
+	<dependencies>
+		<nextcloud min-version="31" max-version="35"/>
+	</dependencies>
+	<external-app>
+		<docker-install>
+			<registry>ghcr.io</registry>
+			<image>ymatia/expense-report</image>
+			<image-tag>latest</image-tag>
+		</docker-install>
+		<environment-variables>
+			<variable>
+				<name>NC_USERNAME</name>
+				<display-name>Nextcloud username</display-name>
+				<description>User used for Tables API and WebDAV upload.</description>
+			</variable>
+			<variable>
+				<name>NC_PASSWORD</name>
+				<display-name>Nextcloud app password</display-name>
+				<description>App password for the configured user.</description>
+			</variable>
+			<variable>
+				<name>NC_BASE_URL</name>
+				<display-name>Nextcloud base URL</display-name>
+				<description>Base URL without trailing slash.</description>
+				<default>https://peacemountain.eu/nextcloud</default>
+			</variable>
+			<variable>
+				<name>NC_FACTS_TABLE_ID</name>
+				<display-name>Facts table ID</display-name>
+				<description>Nextcloud Tables table id for expenses.</description>
+				<default>6</default>
+			</variable>
+			<variable>
+				<name>NC_DEBTS_TABLE_ID</name>
+				<display-name>Debts table ID</display-name>
+				<description>Nextcloud Tables table id for debts.</description>
+				<default>10</default>
+			</variable>
+		</environment-variables>
+		<routes>
+			<route>
+				<url>^/$</url>
+				<verb>GET</verb>
+				<access_level>USER</access_level>
+			</route>
+			<route>
+				<url>^/report$</url>
+				<verb>GET</verb>
+				<access_level>ADMIN</access_level>
+			</route>
+			<route>
+				<url>^/report/data$</url>
+				<verb>GET</verb>
+				<access_level>ADMIN</access_level>
+			</route>
+			<route>
+				<url>^/health$</url>
+				<verb>GET</verb>
+				<access_level>PUBLIC</access_level>
+			</route>
+		</routes>
+	</external-app>
+</info>
