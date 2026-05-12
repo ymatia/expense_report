@@ -16,4 +16,5 @@ COPY --chmod=775 start.sh /
 
 WORKDIR /ex_app/lib
 ENTRYPOINT ["/start.sh", "python3", "main.py"]
-HEALTHCHECK --interval=5s --timeout=2s --retries=30 CMD /healthcheck.sh
+# start-period: allow pip/import + uvicorn bind before failures count
+HEALTHCHECK --interval=5s --timeout=5s --start-period=40s --retries=12 CMD /healthcheck.sh
