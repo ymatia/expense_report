@@ -1,0 +1,4 @@
+nc_py_api[app]>=0.19.2
+numpy
+pandas
+requests
