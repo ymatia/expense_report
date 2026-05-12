@@ -28,7 +28,7 @@ type = "tcp"
 name = "$APP_ID"
 [proxies.plugin]
 type = "unix_domain_socket"
-unixPath = "${HP_EXAPP_SOCK:-/tmp/exapp.sock}"
+unixPath = "/tmp/exapp.sock"
 EOF
     else
         echo "Directory /certs/frp not found. Creating configuration without TLS certificates."
@@ -47,7 +47,7 @@ type = "tcp"
 name = "$APP_ID"
 [proxies.plugin]
 type = "unix_domain_socket"
-unixPath = "${HP_EXAPP_SOCK:-/tmp/exapp.sock}"
+unixPath = "/tmp/exapp.sock"
 EOF
     fi
 else
