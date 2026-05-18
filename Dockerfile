@@ -52,4 +52,4 @@ COPY --chmod=775 start.sh /
 
 WORKDIR /ex_app/lib
 ENTRYPOINT ["/start.sh", "python3", "main.py"]
-# No Docker HEALTHCHECK: AppAPI only blocks on it when defined; HaRP then uses /heartbeat via frpc.
+HEALTHCHECK --interval=2s --timeout=2s --retries=300 CMD /healthcheck.sh

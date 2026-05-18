@@ -372,6 +372,7 @@ def build_app_html() -> str:
 
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     if enabled:
+        nc.ui.top_menu.register("expense_report", "Expense Report", "img/app.svg")
         nc.log(LogLvl.WARNING, "Expense report app enabled")
     else:
         nc.log(LogLvl.WARNING, "Expense report app disabled")

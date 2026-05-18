@@ -59,17 +59,41 @@
 			<route>
 				<url>^/report$</url>
 				<verb>GET</verb>
-				<access_level>ADMIN</access_level>
+				<access_level>USER</access_level>
 			</route>
 			<route>
 				<url>^/report/data$</url>
 				<verb>GET</verb>
-				<access_level>ADMIN</access_level>
+				<access_level>USER</access_level>
 			</route>
 			<route>
 				<url>^/health$</url>
 				<verb>GET</verb>
 				<access_level>PUBLIC</access_level>
+			</route>
+			<route>
+				<url>img\/.*</url>
+				<verb>GET</verb>
+				<access_level>USER</access_level>
+				<headers_to_exclude>[]</headers_to_exclude>
+			</route>
+			<route>
+				<url>js\/.*</url>
+				<verb>GET</verb>
+				<access_level>USER</access_level>
+				<headers_to_exclude>[]</headers_to_exclude>
+			</route>
+			<route>
+				<url>css\/.*</url>
+				<verb>GET</verb>
+				<access_level>USER</access_level>
+				<headers_to_exclude>[]</headers_to_exclude>
+			</route>
+			<route>
+				<url>api\/.*</url>
+				<verb>GET,POST,PUT,DELETE</verb>
+				<access_level>USER</access_level>
+				<headers_to_exclude>[]</headers_to_exclude>
 			</route>
 		</routes>
 	</external-app>
