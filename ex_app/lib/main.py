@@ -422,7 +422,9 @@ def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
         nc.appconfig_ex.set_value("test_ex_app_sensitive_field", "test_sensitive_value", sensitive=True)
 
         if nc.srv_version["major"] >= 29:
-            nc.ui.settings.register_form(SETTINGS_EXAMPLE)        nc.log(LogLvl.WARNING, "Expense report app enabled")
+            nc.ui.settings.register_form(SETTINGS_EXAMPLE)
+
+        nc.log(LogLvl.WARNING, "Expense report app enabled")
     else:
         nc.ui.resources.delete_initial_state(
             "top_menu", "first_menu", "ui_example_state"
