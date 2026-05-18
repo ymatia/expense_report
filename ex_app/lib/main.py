@@ -372,9 +372,70 @@ def build_app_html() -> str:
 
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     if enabled:
-        nc.ui.top_menu.register("expense_report", "Expense Report", "img/app.svg")
-        nc.log(LogLvl.WARNING, "Expense report app enabled")
+        nc.ui.resources.set_initial_state(
+            "top_menu",
+            "first_menu",
+            "ui_example_state",
+            {
+                "initial_value": "test init value",
+                "initial_sensitive_value": "test_sensitive_value",
+            },
+        )
+        nc.ui.resources.set_script("top_menu", "first_menu", "js/ui_example-main")
+        nc.ui.top_menu.register("first_menu", "UI example", "img/app.svg")
+        nc.ui.files_dropdown_menu.register("test_menu", _("Test menu"), "/api/test_menu", mime="image/jpeg",
+                                           icon="img/app-dark.svg")
+        nc.ui.files_dropdown_menu.register_ex("test_redirect", _("Test redirect"), "/api/test_redirect", mime="image/jpeg",
+                                              icon="img/app-dark.svg")
+        nc.occ_commands.register("ui_example:ping", "/occ_ping")
+        nc.occ_commands.register(
+            "ui_example:setup",
+            "/occ_setup",
+            arguments=[
+                {
+                    "name": "test_arg",
+                    "mode": "required",
+                    "description": "Test argument",
+                }
+            ],
+        )
+        nc.occ_commands.register(
+            "ui_example:stream",
+            "/occ_stream",
+            arguments=[
+                {
+                    "name": "stream_count",
+                    "mode": "required",
+                    "description": "Number of stream rows",
+                }
+            ],
+            options=[
+                {
+                    "name": "double",
+                    "mode": "optional",
+                    "description": "Double the stream rows",
+                    "default": False,
+                }
+            ],
+        )
+
+        nc.appconfig_ex.set_value("test_ex_app_sensitive_field", "test_sensitive_value", sensitive=True)
+
+        if nc.srv_version["major"] >= 29:
+            nc.ui.settings.register_form(SETTINGS_EXAMPLE)        nc.log(LogLvl.WARNING, "Expense report app enabled")
     else:
+        nc.ui.resources.delete_initial_state(
+            "top_menu", "first_menu", "ui_example_state"
+        )
+        nc.ui.resources.delete_script("top_menu", "first_menu", "js/ui_example-main")
+        nc.ui.top_menu.unregister("first_menu")
+        nc.ui.files_dropdown_menu.unregister("test_menu")
+        nc.ui.files_dropdown_menu.unregister("test_redirect")
+        nc.occ_commands.unregister("ui_example:ping")
+        nc.occ_commands.unregister("ui_example:setup")
+        nc.occ_commands.unregister("ui_example:stream")
+        nc.appconfig_ex.delete("test_ex_app_sensitive_field")
+
         nc.log(LogLvl.WARNING, "Expense report app disabled")
     return ""
 
