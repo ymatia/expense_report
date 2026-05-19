@@ -372,16 +372,18 @@ def build_app_html() -> str:
 
 
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
+    print(f"enabled={enabled}")
     if enabled:
-        nc.log(LogLvl.WARNING, "Expense report app enabled")
+        await nc.log(LogLvl.WARNING, "Expense report app enabled")
     else:
-        nc.log(LogLvl.WARNING, "Expense report app disabled")
+        await nc.log(LogLvl.WARNING, "Expense report app disabled")
     return ""
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     set_handlers(app, enabled_handler)
+    nc.log(LogLvl.INFO, "Expense report app lifespan")
     yield
 
 
@@ -390,24 +392,24 @@ APP = FastAPI(lifespan=lifespan)
 # Also exempt /health so Docker or admins can curl it without AppAPI headers.
 APP.add_middleware(AppAPIAuthMiddleware, disable_for=["health"])
 
-# Register with Nextcloud AppAPI
-def register_with_nextcloud():
-    # Load registration payload
-    with open("registration.json") as f:
-        registration_payload = json.load(f)
-    r = _request_json(f"/ocs/v2.php/app_api/v1/app/register", registration_payload)
-    print("Registration:", r)
-
 # Serve static files (JS, icons, etc.)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
+
 
 @APP.get("/")
 async def root():
     return {"status": "ok", "message": "Open /report to view expense report UI."}
 
 
-@APP.get("/health")
-async def health():
+@APP.get("/heartbeat")
+async def heartbeat():
+    nc.log(LogLvl.INFO, "Expense report app heartbeat")
+    return {"status": "ok"}
+
+
+@APP.get("/init")
+async def init():
+    nc.log(LogLvl.INFO, "Expense report app init")
     return {"status": "ok"}
 
 
@@ -433,5 +435,12 @@ async def report_data(
 
 if __name__ == "__main__":
     os.chdir(Path(__file__).parent)
-    register_with_nextcloud()
+    payload = {
+        "name": "expense_report_top",
+        "displayName": "Expense Report",
+        "icon": "img/app.svg",
+        "adminRequired": "0",
+    }
+    r = _request_json("/apps/app_api/api/v1/ui/top-menu", payload)
+    print("Top menu entry registered:", r)
     run_app("main:APP", log_level="info")
