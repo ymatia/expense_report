@@ -46,7 +46,7 @@ COPY --from=builder /usr/local/ /usr/local/
 RUN apt-get update && apt-get install -y bash curl procps ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ADD /ex_app/li[b] /ex_app/lib
+COPY ex_app /ex_app
 COPY --chmod=775 healthcheck.sh /
 COPY --chmod=775 start.sh /
 
