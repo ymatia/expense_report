@@ -401,18 +401,6 @@ async def root():
     return {"status": "ok", "message": "Open /report to view expense report UI."}
 
 
-@APP.get("/heartbeat")
-async def heartbeat():
-    nc.log(LogLvl.INFO, "Expense report app heartbeat")
-    return {"status": "ok"}
-
-
-@APP.get("/init")
-async def init():
-    nc.log(LogLvl.INFO, "Expense report app init")
-    return {"status": "ok"}
-
-
 @APP.get("/report", response_class=HTMLResponse)
 async def report_page():
     return HTMLResponse(content=build_app_html())
@@ -435,12 +423,5 @@ async def report_data(
 
 if __name__ == "__main__":
     os.chdir(Path(__file__).parent)
-    payload = {
-        "name": "expense_report_top",
-        "displayName": "Expense Report",
-        "icon": "img/app.svg",
-        "adminRequired": "0",
-    }
-    r = _request_json("/apps/app_api/api/v1/ui/top-menu", payload)
-    print("Top menu entry registered:", r)
+    nc.ui.top_menu.register("expense_report_top", "Expense Report", "img/app.svg")
     run_app("main:APP", log_level="info")
