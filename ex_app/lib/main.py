@@ -374,9 +374,9 @@ def build_app_html() -> str:
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     print(f"enabled={enabled}")
     if enabled:
-        await nc.log(LogLvl.WARNING, "Expense report app enabled")
+        nc.log(LogLvl.WARNING, "Expense report app enabled")
     else:
-        await nc.log(LogLvl.WARNING, "Expense report app disabled")
+        nc.log(LogLvl.WARNING, "Expense report app disabled")
     return ""
 
 
