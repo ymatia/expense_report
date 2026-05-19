@@ -20,17 +20,27 @@ from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_
 from fastapi.staticfiles import StaticFiles
 
 
-def _request_json(url: str) -> list[Any]:
+def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
     nc_url = os.environ["NEXTCLOUD_URL"]
-    app_id = os.environ["NEXTCLOUD_APP_ID"]
-    app_secret = os.environ["NEXTCLOUD_APP_SECRET"]
+    app_id = os.environ["APP_ID"]
+    app_secret = os.environ["APP_SECRET"]
 
-    r = requests.get(
-        f"{nc_url}{url}"
-        ,auth=(app_id, app_secret)
-        ,headers={"OCS-APIRequest": "true"}
-        ,timeout=60
-    )
+    if payload is None:
+        r = requests.get(
+            f"{nc_url}{url}"
+            ,auth=(app_id, app_secret)
+            ,headers={"OCS-APIRequest": "true"}
+            ,timeout=60
+        )
+    else:
+        r = requests.post(
+            f"{nc_url}{url}"
+            ,auth=(app_id, app_secret)
+            ,headers={"OCS-APIRequest": "true"}
+            ,json=payload
+            ,timeout=60
+        )
+
     if r.status_code not in (200, 201, 204):
         raise RuntimeError(f"Request failed ({r.status_code}) for {url}: {r.text}")
     return json.loads(r.text)
@@ -382,21 +392,11 @@ APP.add_middleware(AppAPIAuthMiddleware, disable_for=["health"])
 
 # Register with Nextcloud AppAPI
 def register_with_nextcloud():
-    nc_url = os.environ["NEXTCLOUD_URL"]
-    app_id = os.environ["NEXTCLOUD_APP_ID"]
-    app_secret = os.environ["NEXTCLOUD_APP_SECRET"]
-
     # Load registration payload
     with open("registration.json") as f:
         registration_payload = json.load(f)
-
-    r = requests.post(
-        f"{nc_url}/ocs/v2.php/app_api/v1/app/register",
-        json=registration_payload,
-        auth=(app_id, app_secret),
-        headers={"OCS-APIRequest": "true"}
-    )
-    print("Registration:", r.status_code, r.text)
+    r = _request_json(f"/ocs/v2.php/app_api/v1/app/register", registration_payload)
+    print("Registration:", r)
 
 # Serve static files (JS, icons, etc.)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
