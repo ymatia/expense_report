@@ -399,7 +399,7 @@ def register_with_nextcloud():
     print("Registration:", r.status_code, r.text)
 
 # Serve static files (JS, icons, etc.)
-APP.mount("/static", StaticFiles(directory="static"), name="static")
+APP.mount("/img", StaticFiles(directory="img"), name="img")
 
 @APP.get("/")
 async def root():
