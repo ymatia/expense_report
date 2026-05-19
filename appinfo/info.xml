@@ -22,22 +22,6 @@
 		</docker-install>
 		<environment-variables>
 			<variable>
-				<name>NC_USERNAME</name>
-				<display-name>Nextcloud username</display-name>
-				<description>User used for Tables API and WebDAV upload.</description>
-			</variable>
-			<variable>
-				<name>NC_PASSWORD</name>
-				<display-name>Nextcloud app password</display-name>
-				<description>App password for the configured user.</description>
-			</variable>
-			<variable>
-				<name>NC_BASE_URL</name>
-				<display-name>Nextcloud base URL</display-name>
-				<description>Base URL without trailing slash.</description>
-				<default>https://peacemountain.eu/nextcloud</default>
-			</variable>
-			<variable>
 				<name>NC_FACTS_TABLE_ID</name>
 				<display-name>Facts table ID</display-name>
 				<description>Nextcloud Tables table id for expenses.</description>

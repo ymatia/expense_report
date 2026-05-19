@@ -17,23 +17,28 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from nc_py_api import NextcloudApp
 from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_handlers
+from fastapi.staticfiles import StaticFiles
 
 
-def _request_json(url: str, username: str, password: str) -> list[Any]:
-    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, password), timeout=60)
-    if response.status_code not in (200, 201, 204):
-        raise RuntimeError(f"Request failed ({response.status_code}) for {url}: {response.text}")
-    return json.loads(response.text)
+def _request_json(url: str) -> list[Any]:
+    nc_url = os.environ["NEXTCLOUD_URL"]
+    app_id = os.environ["NEXTCLOUD_APP_ID"]
+    app_secret = os.environ["NEXTCLOUD_APP_SECRET"]
+
+    r = requests.get(
+        f"{nc_url}{url}"
+        ,auth=(app_id, app_secret)
+        ,headers={"OCS-APIRequest": "true"}
+        ,timeout=60
+    )
+    if r.status_code not in (200, 201, 204):
+        raise RuntimeError(f"Request failed ({r.status_code}) for {url}: {r.text}")
+    return json.loads(r.text)
 
 
-def _fetch_selection_values(
-    base_url: str,
-    username: str,
-    password: str,
-    table_id: int,
-) -> tuple[dict[int, str], dict[int, str]]:
-    columns_url = f"{base_url}/index.php/apps/tables/api/1/tables/{table_id}/columns"
-    columns = _request_json(columns_url, username, password)
+def _fetch_selection_values(table_id: int) -> tuple[dict[int, str], dict[int, str]]:
+    columns_url = f"/index.php/apps/tables/api/1/tables/{table_id}/columns"
+    columns = _request_json(columns_url)
     categories: dict[int, str] = {}
     sub_categories: dict[int, str] = {0: ""}
     for col in columns:
@@ -46,23 +51,16 @@ def _fetch_selection_values(
     return categories, sub_categories
 
 
-def _fetch_rows(base_url: str, username: str, password: str, table_id: int) -> pd.DataFrame:
-    rows_url = f"{base_url}/index.php/apps/tables/api/1/tables/{table_id}/rows/simple"
-    rows = _request_json(rows_url, username, password)
+def _fetch_rows(table_id: int) -> pd.DataFrame:
+    rows_url = f"/index.php/apps/tables/api/1/tables/{table_id}/rows/simple"
+    rows = _request_json(rows_url)
     return pd.DataFrame(np.vstack(rows[1:]), columns=rows[0])
 
 
-def _build_report_data(
-    year: int,
-    base_url: str,
-    username: str,
-    password: str,
-    facts_table_id: int,
-    debts_table_id: int,
-) -> dict[str, pd.DataFrame]:
-    categories, sub_categories = _fetch_selection_values(base_url, username, password, facts_table_id)
-    df = _fetch_rows(base_url, username, password, facts_table_id)
-    debts_df = _fetch_rows(base_url, username, password, debts_table_id)
+def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> dict[str, pd.DataFrame]:
+    categories, sub_categories = _fetch_selection_values(facts_table_id)
+    df = _fetch_rows(facts_table_id)
+    debts_df = _fetch_rows(debts_table_id)
 
     df.where(df["Date"].str.startswith(str(year)), inplace=True)
     df.dropna(inplace=True)
@@ -123,18 +121,11 @@ def _to_records(dataframe: pd.DataFrame) -> list[dict[str, Any]]:
 
 
 def get_report_payload(year: int) -> dict[str, Any]:
-    username = os.getenv("NC_USERNAME")
-    password = os.getenv("NC_PASSWORD")
-    if not username or not password:
-        raise RuntimeError("NC_USERNAME and NC_PASSWORD must be set.")
-
-    base_url = os.getenv("NC_BASE_URL", "https://peacemountain.eu/nextcloud")
     facts_table_id = int(os.getenv("NC_FACTS_TABLE_ID", "6"))
     debts_table_id = int(os.getenv("NC_DEBTS_TABLE_ID", "10"))
-    report = _build_report_data(year, base_url, username, password, facts_table_id, debts_table_id)
+    report = _build_report_data(year, facts_table_id, debts_table_id)
     return {
         "year": year,
-        "base_url": base_url,
         "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "tables": {
             "all_expenses": _to_records(report["all_expenses"]),
@@ -372,72 +363,8 @@ def build_app_html() -> str:
 
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     if enabled:
-        nc.ui.resources.set_initial_state(
-            "top_menu",
-            "first_menu",
-            "ui_example_state",
-            {
-                "initial_value": "test init value",
-                "initial_sensitive_value": "test_sensitive_value",
-            },
-        )
-        nc.ui.resources.set_script("top_menu", "first_menu", "js/ui_example-main")
-        nc.ui.top_menu.register("first_menu", "UI example", "img/app.svg")
-        nc.ui.files_dropdown_menu.register("test_menu", _("Test menu"), "/api/test_menu", mime="image/jpeg",
-                                           icon="img/app-dark.svg")
-        nc.ui.files_dropdown_menu.register_ex("test_redirect", _("Test redirect"), "/api/test_redirect", mime="image/jpeg",
-                                              icon="img/app-dark.svg")
-        nc.occ_commands.register("ui_example:ping", "/occ_ping")
-        nc.occ_commands.register(
-            "ui_example:setup",
-            "/occ_setup",
-            arguments=[
-                {
-                    "name": "test_arg",
-                    "mode": "required",
-                    "description": "Test argument",
-                }
-            ],
-        )
-        nc.occ_commands.register(
-            "ui_example:stream",
-            "/occ_stream",
-            arguments=[
-                {
-                    "name": "stream_count",
-                    "mode": "required",
-                    "description": "Number of stream rows",
-                }
-            ],
-            options=[
-                {
-                    "name": "double",
-                    "mode": "optional",
-                    "description": "Double the stream rows",
-                    "default": False,
-                }
-            ],
-        )
-
-        nc.appconfig_ex.set_value("test_ex_app_sensitive_field", "test_sensitive_value", sensitive=True)
-
-        if nc.srv_version["major"] >= 29:
-            nc.ui.settings.register_form(SETTINGS_EXAMPLE)
-
         nc.log(LogLvl.WARNING, "Expense report app enabled")
     else:
-        nc.ui.resources.delete_initial_state(
-            "top_menu", "first_menu", "ui_example_state"
-        )
-        nc.ui.resources.delete_script("top_menu", "first_menu", "js/ui_example-main")
-        nc.ui.top_menu.unregister("first_menu")
-        nc.ui.files_dropdown_menu.unregister("test_menu")
-        nc.ui.files_dropdown_menu.unregister("test_redirect")
-        nc.occ_commands.unregister("ui_example:ping")
-        nc.occ_commands.unregister("ui_example:setup")
-        nc.occ_commands.unregister("ui_example:stream")
-        nc.appconfig_ex.delete("test_ex_app_sensitive_field")
-
         nc.log(LogLvl.WARNING, "Expense report app disabled")
     return ""
 
@@ -453,6 +380,26 @@ APP = FastAPI(lifespan=lifespan)
 # Also exempt /health so Docker or admins can curl it without AppAPI headers.
 APP.add_middleware(AppAPIAuthMiddleware, disable_for=["health"])
 
+# Register with Nextcloud AppAPI
+def register_with_nextcloud():
+    nc_url = os.environ["NEXTCLOUD_URL"]
+    app_id = os.environ["NEXTCLOUD_APP_ID"]
+    app_secret = os.environ["NEXTCLOUD_APP_SECRET"]
+
+    # Load registration payload
+    with open("registration.json") as f:
+        registration_payload = json.load(f)
+
+    r = requests.post(
+        f"{nc_url}/ocs/v2.php/app_api/v1/app/register",
+        json=registration_payload,
+        auth=(app_id, app_secret),
+        headers={"OCS-APIRequest": "true"}
+    )
+    print("Registration:", r.status_code, r.text)
+
+# Serve static files (JS, icons, etc.)
+APP.mount("/static", StaticFiles(directory="static"), name="static")
 
 @APP.get("/")
 async def root():
@@ -486,4 +433,5 @@ async def report_data(
 
 if __name__ == "__main__":
     os.chdir(Path(__file__).parent)
+    register_with_nextcloud()
     run_app("main:APP", log_level="info")

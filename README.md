@@ -12,12 +12,10 @@ Nextcloud Tables data.
 
 ## Required environment variables
 
-- `NC_USERNAME` - Nextcloud username.
-- `NC_PASSWORD` - app password or user password.
+None
 
 ## Optional environment variables
 
-- `NC_BASE_URL` (default: `https://peacemountain.eu/nextcloud`)
 - `NC_FACTS_TABLE_ID` (default: `6`)
 - `NC_DEBTS_TABLE_ID` (default: `10`)
 
