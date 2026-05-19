@@ -374,23 +374,23 @@ def build_app_html() -> str:
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     print(f"enabled={enabled}")
     if enabled:
-        nc.log(LogLvl.WARNING, "Expense report app enabled")
+        nc.ui.top_menu.register("expense_report_top", "Expense Report", "img/app.png")
+        nc.log(LogLvl.INFO, "Expense report app enabled")
     else:
-        nc.log(LogLvl.WARNING, "Expense report app disabled")
+        nc.log(LogLvl.INFO, "Expense report app disabled")
     return ""
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     set_handlers(app, enabled_handler)
-    nc.log(LogLvl.INFO, "Expense report app lifespan")
     yield
 
 
 APP = FastAPI(lifespan=lifespan)
 # Public probes: /heartbeat is registered by set_handlers() and always exempt.
 # Also exempt /health so Docker or admins can curl it without AppAPI headers.
-APP.add_middleware(AppAPIAuthMiddleware, disable_for=["health"])
+APP.add_middleware(AppAPIAuthMiddleware)
 
 # Serve static files (JS, icons, etc.)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
@@ -423,5 +423,4 @@ async def report_data(
 
 if __name__ == "__main__":
     os.chdir(Path(__file__).parent)
-    nc.ui.top_menu.register("expense_report_top", "Expense Report", "img/app.svg")
     run_app("main:APP", log_level="info")
