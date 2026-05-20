@@ -16,7 +16,7 @@
 		<nextcloud min-version="31" max-version="35"/>
 	</dependencies>
 	<navigations>
-		<navigation role="admin">
+		<navigation role="all">
 			<id>expense-report</id>
 			<name>Expense Report</name>
 			<route>report</route>
@@ -57,7 +57,7 @@
 				<access_level>USER</access_level>
 			</route>
 			<route>
-				<url>^/report/data$</url>
+				<url>^/data$</url>
 				<verb>GET</verb>
 				<access_level>USER</access_level>
 			</route>

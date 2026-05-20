@@ -374,6 +374,16 @@ def build_app_html() -> str:
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     print(f"enabled={enabled}")
     if enabled:
+        nc.ui.resources.set_initial_state(
+            "top_menu",
+            "expense_report_top",
+            "ui_example_state",
+            {
+                "initial_value": "test init value",
+                "initial_sensitive_value": "test_sensitive_value",
+            },
+        )
+        nc.ui.resources.set_script("top_menu", "expense_report_top", "js/expense_report_main")
         nc.ui.top_menu.register("expense_report_top", "Expense Report", "img/app.svg")
         nc.log(LogLvl.INFO, "Expense report app enabled")
     else:
@@ -394,6 +404,7 @@ APP.add_middleware(AppAPIAuthMiddleware)
 
 # Serve static files (JS, icons, etc.)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
+APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 
 @APP.get("/", response_class=HTMLResponse)
