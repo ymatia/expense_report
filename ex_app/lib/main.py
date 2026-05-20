@@ -343,7 +343,7 @@ def build_app_html() -> str:
           });
         },
         async loadReport() {
-          const res = await fetch(`/report/data?year=${this.year}`);
+          const res = await fetch(`/data?year=${this.year}`);
           if (!res.ok) {
             const payload = await res.json().catch(() => ({}));
             throw new Error(payload.detail || "Failed loading report");
@@ -396,17 +396,12 @@ APP.add_middleware(AppAPIAuthMiddleware)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
 
 
-@APP.get("/")
-async def root():
-    return {"status": "ok", "message": "Open /report to view expense report UI."}
-
-
-@APP.get("/report", response_class=HTMLResponse)
+@APP.get("/", response_class=HTMLResponse)
 async def report_page():
     return HTMLResponse(content=build_app_html())
 
 
-@APP.get("/report/data")
+@APP.get("/data")
 async def report_data(
     nc: Annotated[NextcloudApp, Depends(nc_app)],
     year: int | None = None,
