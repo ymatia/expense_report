@@ -386,8 +386,10 @@ def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
         nc.ui.resources.set_script("top_menu", "expense_report_top", "js/expense_report_main")
         nc.ui.top_menu.register("expense_report_top", "Expense Report", "img/app.svg")
         nc.log(LogLvl.INFO, "Expense report app enabled")
+        print("Expense report app enabled")
     else:
         nc.log(LogLvl.INFO, "Expense report app disabled")
+        print("Expense report app disabled")
     return ""
 
 
@@ -408,6 +410,10 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 
 @APP.get("/", response_class=HTMLResponse)
+async def report_page():
+    return HTMLResponse(content=build_app_html())
+
+@APP.get("/report", response_class=HTMLResponse)
 async def report_page():
     return HTMLResponse(content=build_app_html())
 
