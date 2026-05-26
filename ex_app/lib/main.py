@@ -150,6 +150,7 @@ def get_report_payload(year: int) -> dict[str, Any]:
 
 
 def build_app_html() -> str:
+    print("in build_app_html")
     return """<!doctype html>
 <html>
 <head>
@@ -410,11 +411,13 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 
 @APP.get("/", response_class=HTMLResponse)
-async def report_page():
+async def root_page():
+    print("In root_page")
     return HTMLResponse(content=build_app_html())
 
 @APP.get("/report", response_class=HTMLResponse)
 async def report_page():
+    print("In report_page")
     return HTMLResponse(content=build_app_html())
 
 
@@ -423,13 +426,16 @@ async def report_data(
     nc: Annotated[NextcloudApp, Depends(nc_app)],
     year: int | None = None,
 ):
+    print("in data")
     report_year = year or datetime.today().year
     try:
         payload = await to_thread(get_report_payload, report_year)
         nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
+        print(f"Loaded report data for {report_year}")
         return JSONResponse(content=payload)
     except Exception as exc:
         nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
+        print(f"Failed to load report data: {exc}")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
