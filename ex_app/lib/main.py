@@ -408,7 +408,7 @@ APP.add_middleware(AppAPIAuthMiddleware)
 
 # Serve static files (JS, icons, etc.)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
-APP.mount("/src", StaticFiles(directory="../../src"), name="src")
+# APP.mount("/src", StaticFiles(directory="../../src"), name="src")
 
 
 @APP.get("/", response_class=HTMLResponse)
