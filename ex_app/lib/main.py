@@ -22,6 +22,7 @@ from fastapi.staticfiles import StaticFiles
 
 def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
     nc_url = os.environ["NEXTCLOUD_URL"]
+    print(f"nc_url={nc_url}")
     app_id = os.environ["APP_ID"]
     app_secret = os.environ["APP_SECRET"]
 
@@ -377,15 +378,15 @@ def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     if enabled:
         nc.ui.resources.set_initial_state(
             "top_menu",
-            "expense_report_top",
+            "report",
             "ui_example_state",
             {
                 "initial_value": "test init value",
                 "initial_sensitive_value": "test_sensitive_value",
             },
         )
-        nc.ui.resources.set_script("top_menu", "expense_report_top", "js/expense_report_main")
-        nc.ui.top_menu.register("expense_report_top", "Expense Report", "img/app.svg")
+        # nc.ui.resources.set_script("top_menu", "report", "js/expense_report_main")
+        nc.ui.top_menu.register("report", "Expense Report", "img/app.svg")
         nc.log(LogLvl.INFO, "Expense report app enabled")
         print("Expense report app enabled")
     else:
