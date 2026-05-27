@@ -73,7 +73,7 @@
 				<headers_to_exclude>[]</headers_to_exclude>
 			</route>
 			<route>
-				<url>src\/.*</url>
+				<url>js\/.*</url>
 				<verb>GET</verb>
 				<access_level>USER</access_level>
 				<headers_to_exclude>[]</headers_to_exclude>
