@@ -7,6 +7,7 @@ FROM node:22 AS frontend-builder
 COPY package.json ./
 RUN npm install
 RUN npm install vue @vitejs/plugin-vue
+RUN npm install @nextcloud/vue
 
 # Copy the rest of your source
 COPY src ./src
