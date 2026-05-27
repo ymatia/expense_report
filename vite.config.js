@@ -1,16 +1,17 @@
 import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 
 export default defineConfig({
+  plugins: [vue()],
   build: {
-    outDir: 'src',          // output into the same folder
-    emptyOutDir: false,     // do NOT delete the folder
-    sourcemap: false,
+    outDir: 'src',
+    emptyOutDir: false,
     rollupOptions: {
       input: resolve(__dirname, 'src/main.ts'),
       output: {
-        entryFileNames: 'main.js',   // overwrite main.js
-        format: 'iife'               // classic script, no imports
+        entryFileNames: 'main.js',
+        format: 'iife'
       }
     }
   }

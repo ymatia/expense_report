@@ -6,7 +6,7 @@ FROM node:22 AS frontend-builder
 # Copy only package files first (better caching)
 COPY package.json ./
 RUN npm install
-RUN npm install vue
+RUN npm install vue @vitejs/plugin-vue
 
 # Copy the rest of your source
 COPY src ./src
