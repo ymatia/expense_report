@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-import { setAppVersion, setAppName } from '@nextcloud/vue/dist/initialState'
+import { setAppName, setAppVersion } from '@nextcloud/vue/dist/initial-state.js'
 setAppVersion('33.0.0')
 setAppName('expense-report')
 
