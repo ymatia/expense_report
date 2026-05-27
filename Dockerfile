@@ -15,8 +15,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # -----------------------------
 FROM node:20 AS frontend-builder
 
-WORKDIR /ex_app
-
 # Copy only package files first (better caching)
 COPY package.json package-lock.json ./
 RUN npm install
@@ -28,7 +26,6 @@ COPY vite.config.js ./
 # Build the frontend
 RUN npm run build
     
-
 # FRP client (required when HP_SHARED_KEY is set: bridges UDS to HaRP)
 ARG FRP_VERSION=0.61.1
 ARG FRP_AMD64_SHA256=bff260b68ca7b1461182a46c4f34e9709ba32764eed30a15dd94ac97f50a2c40

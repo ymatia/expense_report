@@ -3,7 +3,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   build: {
-    outDir: 'src',          // output into the same folder
+    outDir: 'ex_app/js',          // output into the same folder
     emptyOutDir: false,     // do NOT delete the folder
     sourcemap: false,
     rollupOptions: {
