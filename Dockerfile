@@ -63,6 +63,7 @@ RUN apt-get update && apt-get install -y bash curl procps ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY ex_app /ex_app
+COPY --from=frontend-builder /src/main.js /ex_app/src/main.js
 COPY --chmod=775 healthcheck.sh /
 COPY --chmod=775 start.sh /
 
