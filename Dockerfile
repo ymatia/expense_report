@@ -1,15 +1,3 @@
-#############################
-# Stage 1: Builder (Python deps + frpc for HaRP)
-#############################
-FROM python:3.12-slim-bookworm AS builder
-
-RUN apt-get update && apt-get install -y curl ca-certificates && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt /
-RUN --mount=type=cache,target=/root/.cache/pip \
-    python3 -m pip install --root-user-action=ignore -r /requirements.txt && rm /requirements.txt
-
 # -----------------------------
 # Stage 1a: Build frontend assets
 # -----------------------------
@@ -25,7 +13,20 @@ COPY vite.config.js ./
 
 # Build the frontend
 RUN npm run build
-    
+
+#############################
+# Stage 1: Builder (Python deps + frpc for HaRP)
+#############################
+FROM python:3.12-slim-bookworm AS builder
+
+RUN apt-get update && apt-get install -y curl ca-certificates && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt /
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python3 -m pip install --root-user-action=ignore -r /requirements.txt && rm /requirements.txt
+
+
 #############################
 # Stage 2: Runtime
 #############################
