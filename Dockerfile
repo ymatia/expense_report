@@ -3,6 +3,8 @@
 # -----------------------------
 FROM node:22 AS frontend-builder
 
+WORKDIR /
+
 # Copy only package files first (better caching)
 COPY package.json ./
 RUN npm install
@@ -20,6 +22,8 @@ RUN npm run build
 # Stage 1: Builder (Python deps + frpc for HaRP)
 #############################
 FROM python:3.12-slim-bookworm AS builder
+
+WORKDIR /
 
 RUN apt-get update && apt-get install -y curl ca-certificates && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -58,6 +62,8 @@ RUN set -ex; \
 # Stage 2: Runtime
 #############################
 FROM python:3.12-slim-bookworm
+
+WORKDIR /
 
 COPY --from=builder /usr/local/ /usr/local/
 
