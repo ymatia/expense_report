@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-import { APP_API_PROXY_URL_PREFIX, EX_APP_ID } from './constants/AppAPI.js'
+import { APP_API_PROXY_URL_PREFIX, EX_APP_ID } from './AppAPI.js'
 import { getCSPNonce } from '@nextcloud/auth'
 
 Vue.prototype.t = translate
