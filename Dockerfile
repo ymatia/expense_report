@@ -1,11 +1,12 @@
 # -----------------------------
 # Stage 1a: Build frontend assets
 # -----------------------------
-FROM node:24 AS frontend-builder
+FROM node:22 AS frontend-builder
 
 # Copy only package files first (better caching)
 COPY package.json ./
 RUN npm install
+RUN npm install vue
 
 # Copy the rest of your source
 COPY src ./src
