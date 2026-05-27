@@ -1,10 +1,10 @@
 # -----------------------------
 # Stage 1a: Build frontend assets
 # -----------------------------
-FROM node:20 AS frontend-builder
+FROM node:24 AS frontend-builder
 
 # Copy only package files first (better caching)
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm install
 
 # Copy the rest of your source
