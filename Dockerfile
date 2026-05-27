@@ -26,6 +26,11 @@ COPY vite.config.js ./
 # Build the frontend
 RUN npm run build
     
+#############################
+# Stage 2: Runtime
+#############################
+FROM python:3.12-slim-bookworm
+
 # FRP client (required when HP_SHARED_KEY is set: bridges UDS to HaRP)
 ARG FRP_VERSION=0.61.1
 ARG FRP_AMD64_SHA256=bff260b68ca7b1461182a46c4f34e9709ba32764eed30a15dd94ac97f50a2c40
@@ -51,11 +56,6 @@ RUN set -ex; \
     cp /tmp/frp_${FRP_VERSION}_linux_${FRP_ARCH}/frpc /usr/local/bin/frpc; \
     chmod +x /usr/local/bin/frpc; \
     rm -rf /tmp/frp_${FRP_VERSION}_linux_${FRP_ARCH} /tmp/frp.tar.gz
-
-#############################
-# Stage 2: Runtime
-#############################
-FROM python:3.12-slim-bookworm
 
 COPY --from=builder /usr/local/ /usr/local/
 
