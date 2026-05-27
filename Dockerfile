@@ -11,7 +11,7 @@ RUN npm install @nextcloud/vue
 
 # Copy the rest of your source
 COPY src ./src
-COPY vite.config.js ./
+COPY vite.config.mjs ./
 
 # Build the frontend
 RUN npm run build
