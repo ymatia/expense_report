@@ -10,6 +10,25 @@ COPY requirements.txt /
 RUN --mount=type=cache,target=/root/.cache/pip \
     python3 -m pip install --root-user-action=ignore -r /requirements.txt && rm /requirements.txt
 
+# -----------------------------
+# Stage 1a: Build frontend assets
+# -----------------------------
+FROM node:20 AS frontend-builder
+
+WORKDIR /ex_app
+
+# Copy only package files first (better caching)
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copy the rest of your source
+COPY src ./src
+COPY vite.config.js ./
+
+# Build the frontend
+RUN npm run build
+    
+
 # FRP client (required when HP_SHARED_KEY is set: bridges UDS to HaRP)
 ARG FRP_VERSION=0.61.1
 ARG FRP_AMD64_SHA256=bff260b68ca7b1461182a46c4f34e9709ba32764eed30a15dd94ac97f50a2c40
