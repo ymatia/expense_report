@@ -7,6 +7,7 @@
   "dependencies": {
 		"@rollup/plugin-replace": "^6.0.3",
 		"@vitejs/plugin-vue": "^6.0.6",
+    "@nextcloud/vite-config": "^2.5.2",
 		"browserslist-to-esbuild": "^2.1.1",
 		"magic-string": "^0.30.21",
 		"rollup-plugin-corejs": "^1.0.2",
@@ -34,7 +35,7 @@
 		"vite": "^7.3.1"
 	},
 	"engines": {
-		"node": "^20 || ^22 || ^24"
+		"node": "^22 || ^24"
 	},
 	"devEngines": {
 		"packageManager": [
