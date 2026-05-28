@@ -7,9 +7,7 @@ WORKDIR /
 
 # Copy only package files first (better caching)
 COPY package.json ./
-RUN npm install
-RUN npm install vue @vitejs/plugin-vue
-RUN npm install @nextcloud/vue
+RUN npm install vue @vitejs/plugin-vue @nextcloud/vue @nextcloud/vite-config
 
 # Copy the rest of your source
 COPY src ./src
