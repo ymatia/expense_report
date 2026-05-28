@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <info>
 	<id>expense-report</id>
-	<AppName>expense-report</name>
-	<AppVersion>expense-report</name>
+	<AppName>expense-report</AppName>
+	<AppVersion>expense-report</AppVersion>
 	<name>Expense Report</name>
 	<summary>Render yearly expense report in Nextcloud UI</summary>
 	<description>
