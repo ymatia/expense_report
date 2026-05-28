@@ -3,7 +3,6 @@ import { defineConfig } from 'vite'
 import path from 'node:path'
 
 const yourOverrides = defineConfig({
-    plugins: [vue()],
     build: {
       outDir: 'src',
       emptyOutDir: false,
