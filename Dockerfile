@@ -11,7 +11,7 @@ RUN npm install
 
 # Copy the rest of your source
 COPY src ./src
-COPY vite.config.mjs ./
+COPY vite.config.js ./
 
 # Build the frontend
 RUN npm run build
