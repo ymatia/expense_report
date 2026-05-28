@@ -406,9 +406,10 @@ APP = FastAPI(lifespan=lifespan)
 # Also exempt /health so Docker or admins can curl it without AppAPI headers.
 APP.add_middleware(AppAPIAuthMiddleware)
 
-# Serve static files (JS, icons, etc.)
+# Serve static files (JS, CSS, icons, etc.)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
 APP.mount("/js", StaticFiles(directory="../js"), name="js")
+APP.mount("/css", StaticFiles(directory="../css"), name="css")
 
 
 @APP.get("/", response_class=HTMLResponse)
