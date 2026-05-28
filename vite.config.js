@@ -1,6 +1,6 @@
 import { createAppConfig } from '@nextcloud/vite-config'
 import { defineConfig } from 'vite'
-import path from 'node:path'
+import { resolve } from 'path'
 
 const yourOverrides = defineConfig({
     build: {
