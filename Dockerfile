@@ -1,13 +1,13 @@
 # -----------------------------
 # Stage 1a: Build frontend assets
 # -----------------------------
-FROM node:22 AS frontend-builder
+FROM node:24 AS frontend-builder
 
 WORKDIR /
 
 # Copy only package files first (better caching)
 COPY package.json ./
-RUN npm install vue vite @vitejs/plugin-vue @nextcloud/vue @nextcloud/vite-config
+RUN npm install
 
 # Copy the rest of your source
 COPY src ./src
