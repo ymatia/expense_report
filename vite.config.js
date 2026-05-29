@@ -1,12 +1,12 @@
 import { createAppConfig } from '@nextcloud/vite-config'
-import { defineConfig, splitVendorChunkPlugin } from 'vite'
+import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
 const yourOverrides = defineConfig({
-    plugins: [splitVendorChunkPlugin()],
     build: {
       outDir: 'js',
       emptyOutDir: false,
+      minify: false,
       rollupOptions: {
         input: resolve(__dirname, 'src/main.ts'),
         output: {
