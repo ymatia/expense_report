@@ -4,13 +4,12 @@ import { resolve } from 'path'
 
 const yourOverrides = defineConfig({
     build: {
-      outDir: 'src',
+      outDir: 'js',
       emptyOutDir: false,
       rollupOptions: {
         input: resolve(__dirname, 'src/main.ts'),
         output: {
-          entryFileNames: 'main.js',
-          format: 'iife'
+          entryFileNames: 'main.js'
         }
       }
     }
