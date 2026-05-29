@@ -1,10 +1,9 @@
 import { createAppConfig } from '@nextcloud/vite-config'
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import { resolve } from 'path'
-import vue from '@vitejs/plugin-vue'
 
 const yourOverrides = defineConfig({
-    plugins: [vue()],
+    plugins: [splitVendorChunkPlugin()],
     build: {
       outDir: 'js',
       emptyOutDir: false,
