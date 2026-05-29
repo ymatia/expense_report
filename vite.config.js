@@ -6,7 +6,6 @@ const yourOverrides = defineConfig({
     build: {
       outDir: 'js',
       emptyOutDir: false,
-      minify: false,
       rollupOptions: {
         input: resolve(__dirname, 'src/main.ts'),
         output: {
@@ -21,5 +20,8 @@ export default createAppConfig({
     main: 'src/main.ts'
 }, {
     // options
-    config: yourOverrides
+    appName: "expense-report",
+    //config: yourOverrides,
+    minify: false,
+    OptionalinlineCSS: true
 })
