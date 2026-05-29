@@ -9,7 +9,7 @@ const yourOverrides = defineConfig({
       rollupOptions: {
         input: resolve(__dirname, 'src/main.ts'),
         output: {
-          entryFileNames: 'main.js'
+          entryFileNames: 'expense-report-main.js'
         }
       }
     }
@@ -21,7 +21,7 @@ export default createAppConfig({
 }, {
     // options
     appName: "expense-report",
-    //config: yourOverrides,
+    config: yourOverrides,
     minify: false,
     OptionalinlineCSS: true
 })
