@@ -4,7 +4,7 @@ import NcContent from '@nextcloud/vue/components/NcContent'
 </script>
 
 <template>
-	<NcContent id="content" app-name="expense-report">
+	<NcContent id="exprep" app-name="expense-report">
 		<NcAppContent :class="$style.content">
 			<h2>Hello world!</h2>
 		</NcAppContent>
