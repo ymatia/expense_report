@@ -1,8 +1,10 @@
 import { createAppConfig } from '@nextcloud/vite-config'
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import vue from '@vitejs/plugin-vue'
 
 const yourOverrides = defineConfig({
+    plugins: [vue()],
     build: {
       outDir: 'js',
       emptyOutDir: false,
