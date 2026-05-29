@@ -385,7 +385,7 @@ def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
                 "initial_sensitive_value": "test_sensitive_value",
             },
         )
-        nc.ui.resources.set_script("top_menu", "report", "../../../../../nextcloud/index.php/apps/app_api/proxy/expense-report/js/main")
+        nc.ui.resources.set_script("top_menu", "report", "../../../../../nextcloud/index.php/apps/app_api/proxy/expense-report/js/expense-report-main")
         nc.ui.top_menu.register("report", "Expense Report", "img/app.svg")
         nc.log(LogLvl.INFO, "Expense report app enabled")
         print("Expense report app enabled")
