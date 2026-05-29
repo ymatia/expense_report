@@ -71,7 +71,7 @@ RUN apt-get update && apt-get install -y bash curl procps ca-certificates && \
 COPY ex_app /ex_app
 # COPY --from=frontend-builder js/expense-report-main.mjs /ex_app/js/main.js
 COPY --from=frontend-builder js/* /ex_app/js/
-COPY --from=frontend-builder css/* /ex_app/css/
+# COPY --from=frontend-builder css/* /ex_app/css/
 COPY --chmod=775 healthcheck.sh /
 COPY --chmod=775 start.sh /
 
