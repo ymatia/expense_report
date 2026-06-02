@@ -1,11 +1,3 @@
-<script>
-	import NcContent from '@nextcloud/vue/components/NcContent'
-	import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
-	import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-	import NcAppNavigationToggle from '@nextcloud/vue/components/NcAppNavigationToggle'
-	import { emit } from '@nextcloud/event-bus'
-</script>
-
 <template>
 	<NcContent app-name="expense-report">
 		<div class="styleguide-nc-content">
@@ -30,6 +22,11 @@
 </template>
 
 <script>
+	import NcContent from '@nextcloud/vue/components/NcContent'
+	import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+	import NcAppContent from '@nextcloud/vue/components/NcAppContent'
+	import NcAppNavigationToggle from '@nextcloud/vue/components/NcAppNavigationToggle'
+	import { emit } from '@nextcloud/event-bus'
 	import IconCheck from 'vue-material-design-icons/Check'
 
 	export default {
