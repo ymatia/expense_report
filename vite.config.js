@@ -9,7 +9,8 @@ const yourOverrides = defineConfig({
       rollupOptions: {
         input: resolve(__dirname, 'src/main.ts'),
         output: {
-          entryFileNames: 'expense-report-main.js'
+          format: 'iife',
+		  entryFileNames: 'expense-report-main.js'
         }
       }
     }

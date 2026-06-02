@@ -1,7 +1,9 @@
+console.log('before import')
+
 import { createApp } from 'vue'
 import App from './App.vue'
 
-console.log('before')
+console.log('before dom mount point')
 
 // Create a real DOM mount point for Vue
 const root = document.createElement('div')

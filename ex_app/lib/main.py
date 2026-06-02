@@ -376,15 +376,15 @@ def build_app_html() -> str:
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     print(f"enabled={enabled}")
     if enabled:
-        nc.ui.resources.set_initial_state(
-            "top_menu",
-            "report",
-            "expense-report_state",
-            {
-                "initial_value": "test init value",
-                "initial_sensitive_value": "test_sensitive_value",
-            },
-        )
+        # nc.ui.resources.set_initial_state(
+        #     "top_menu",
+        #     "report",
+        #     "expense-report_state",
+        #     {
+        #         "initial_value": "test init value",
+        #         "initial_sensitive_value": "test_sensitive_value",
+        #     },
+        # )
         nc.ui.resources.set_script("top_menu", "report", "../../../../../nextcloud/index.php/apps/app_api/proxy/expense-report/js/expense-report-main")
         nc.ui.top_menu.register("report", "Expense Report", "img/app.svg")
         nc.log(LogLvl.INFO, "Expense report app enabled")
