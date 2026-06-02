@@ -6,7 +6,9 @@ import NcContent from '@nextcloud/vue/components/NcContent'
 <template>
 	<NcContent id="exprep" app-name="expense-report">
 		<NcAppContent :class="$style.content">
-			<h2>Hello world!</h2>
+			<div id="exprep">
+				<h1>Hello world!</h1>
+			</div>
 		</NcAppContent>
 	</NcContent>
 </template>
