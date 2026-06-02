@@ -1,9 +1,9 @@
-<script setup lang="ts">
-import NcContent from '@nextcloud/vue/components/NcContent'
-import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
-import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-import NcAppNavigationToggle from '@nextcloud/vue/components/NcAppNavigationToggle'
-import { emit } from '@nextcloud/event-bus'
+<script>
+	import NcContent from '@nextcloud/vue/components/NcContent'
+	import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+	import NcAppContent from '@nextcloud/vue/components/NcAppContent'
+	import NcAppNavigationToggle from '@nextcloud/vue/components/NcAppNavigationToggle'
+	import { emit } from '@nextcloud/event-bus'
 </script>
 
 <template>
@@ -48,6 +48,5 @@ import { emit } from '@nextcloud/event-bus'
 	}
 </script>
 
-<style scoped>
-
+<style>
 </style>
