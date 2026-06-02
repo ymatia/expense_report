@@ -5,6 +5,8 @@ import App from './App.vue'
 const root = document.createElement('div')
 root.id = 'exprep'
 document.body.appendChild(root)
+console.log('created div with id exprep')
 
 const app = createApp(App)
 app.mount('#exprep')
+console.log('mounted app')
