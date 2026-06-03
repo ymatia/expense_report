@@ -11,7 +11,7 @@
 				</NcAppNavigationItem>
 			</template>
 		</NcAppNavigation>
-		<NcAppContent>
+		<NcAppContent class="exprep_content">
 			Select a report from the left
 		</NcAppContent>
 	</NcContent>
@@ -51,7 +51,13 @@
 	}
 	
 	.exprep_navigation {
-		width: 250px
+		width: auto;
+		display: block;
+	}
+	
+	.exprep_content {
+		width: auto;
+		display: block;
 	}
 
 </style>
