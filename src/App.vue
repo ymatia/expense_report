@@ -1,9 +1,9 @@
 <template>
-	<NcContent app-name="expense-report">
+	<NcContent app-name="expense-report" class="styleguide-nc-content">
 		<NcAppNavigation>
 			<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" />
 			<template #list>
-				<NcAppNavigationItem name="Finance Overview">
+				<NcAppNavigationItem name="Finance Overview" class="exprep_navigation">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
 				</NcAppNavigationItem>
 				<NcAppNavigationItem name="Detailed">
@@ -45,10 +45,13 @@
 </script>
 
 <style scoped>
-	#content-vue {
+	.styleguide-nc-content {
 		background-color: var(--color-background-plain);
 		overflow: hidden;
 	}
-
+	
+	.exprep_navigation {
+		width: 250px
+	}
 
 </style>
