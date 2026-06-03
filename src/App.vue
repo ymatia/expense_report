@@ -1,19 +1,19 @@
 <template>
 	<NcContent app-name="expense-report">
-			<NcAppNavigation>
-				<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" />
-				<template #list>
-					<NcAppNavigationItem name="Finance Overview">
-						<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
-					</NcAppNavigationItem>
-					<NcAppNavigationItem name="Detailed">
-						<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
-					</NcAppNavigationItem>
-				</template>
-			</NcAppNavigation>
-			<NcAppContent>
-				Select a report from the left
-			</NcAppContent>
+		<NcAppNavigation>
+			<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" />
+			<template #list>
+				<NcAppNavigationItem name="Finance Overview">
+					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
+				</NcAppNavigationItem>
+				<NcAppNavigationItem name="Detailed">
+					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
+				</NcAppNavigationItem>
+			</template>
+		</NcAppNavigation>
+		<NcAppContent>
+			Select a report from the left
+		</NcAppContent>
 	</NcContent>
 </template>
 
@@ -46,28 +46,9 @@
 
 <style scoped>
 	#content-vue {
-		position: relative;
-		width: 800px;
-		height: 400px;
-	}
-	
-	.styleguide-nc-content {
-		position: relative;
-		height: 300px;
 		background-color: var(--color-background-plain);
 		overflow: hidden;
 	}
 
-	.navigation__header,
-	.navigation__footer {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-		padding: 4px;
-	}
 
-	.modal-content {
-		height: 120px;
-		padding: 10px;
-	}
 </style>
