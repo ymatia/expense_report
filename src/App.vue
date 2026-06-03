@@ -1,6 +1,5 @@
 <template>
 	<NcContent app-name="expense-report">
-		<div class="styleguide-nc-content">
 			<NcAppNavigation>
 				<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" />
 				<template #list>
@@ -15,7 +14,6 @@
 			<NcAppContent>
 				Select a report from the left
 			</NcAppContent>
-		</div>
 	</NcContent>
 </template>
 
@@ -37,7 +35,6 @@
 		provide() {
 			return {
 				mdiCheckPath: mdiCheck,
-				'NcContent:setHasAppNavigation': () => {},
 			}
 		},
 		data() {
