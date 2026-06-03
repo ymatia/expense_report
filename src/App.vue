@@ -12,10 +12,10 @@
 					</NcAppNavigationItem>
 				</template>
 			</NcAppNavigation>
+			<NcAppContent>
+				Select a report from the left
+			</NcAppContent>
 		</div>
-		<NcAppContent>
-			Select a report from the left
-		</NcAppContent>
 	</NcContent>
 </template>
 
