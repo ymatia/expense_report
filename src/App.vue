@@ -48,10 +48,11 @@
 	.styleguide-nc-content {
 		background-color: var(--color-background-plain);
 		overflow: hidden;
+		width: auto;
 	}
 	
 	.exprep_navigation {
-		width: auto;
+		width: 250px;
 		display: block;
 	}
 	
