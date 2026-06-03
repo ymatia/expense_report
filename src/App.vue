@@ -1,7 +1,7 @@
 <template>
-	<NcContent app-name="expense-report" class="styleguide-nc-content">
+	<NcContent app-name="expense-report" id="app-content">
 		<NcAppNavigation>
-			<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" />
+			<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" id="content"/>
 			<template #list>
 				<NcAppNavigationItem name="Finance Overview" class="exprep_navigation">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
@@ -11,7 +11,7 @@
 				</NcAppNavigationItem>
 			</template>
 		</NcAppNavigation>
-		<NcAppContent class="exprep_content">
+		<NcAppContent>
 			Select a report from the left
 		</NcAppContent>
 	</NcContent>
@@ -44,23 +44,11 @@
 	}
 </script>
 
-<style scoped>
-	.styleguide-nc-content {
-		background-color: var(--color-background-plain);
-		overflow: hidden;
-		width: auto;
-		display: flex;
+<style lang="scss" scoped>
+	#app-content {
+		transition: margin-left 100ms ease;
+		position: relative;
+		overflow-x: hidden;
+		align-items: stretch;
 	}
-	
-	.exprep_navigation {
-		max-width: 250px;
-		flex: 0 0 25%;
-		order: -1;
-   }
-	
-	.exprep_content {
-		flex: 0 0 75%;
-		margin-right: auto;
-	}
-
 </style>
