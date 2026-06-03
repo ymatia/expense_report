@@ -12,7 +12,6 @@
 			</NcAppNavigation>
 		</div>
 		<NcAppContent>
-			<NcAppNavigationToggle />
 			Select a report from the left
 		</NcAppContent>
 	</NcContent>
@@ -22,7 +21,6 @@
 	import NcContent from '@nextcloud/vue/components/NcContent'
 	import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 	import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-	import { NcAppNavigationToggle } from '@nextcloud/vue/dist/Components/NcAppNavigationToggle'
 	import { emit } from '@nextcloud/event-bus'
 	import SvgIcon from '@jamescoyle/vue-icon';
 	import { mdiCheck } from '@mdi/js';
@@ -30,7 +28,6 @@
 	export default {
 		components: {
 			SvgIcon,
-			NcAppNavigationToggle,
 		},
 		provide() {
 			return {
