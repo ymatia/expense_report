@@ -49,16 +49,15 @@
 		background-color: var(--color-background-plain);
 		overflow: hidden;
 		width: auto;
+		display: flex;
 	}
 	
 	.exprep_navigation {
 		width: 250px;
-		display: block;
 	}
 	
 	.exprep_content {
 		width: auto;
-		display: block;
 	}
 
 </style>
