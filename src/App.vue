@@ -4,14 +4,10 @@
 			<NcAppNavigation>
 				<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" />
 				<NcAppNavigationItem name="Finance Overview">
-					<template #icon>
-						<IconCheck :size="20" />
-					</template>
+					<svg-icon type="mdi" :path="mdiCheckPath"></svg-icon>
 				</NcAppNavigationItem>
 				<NcAppNavigationItem name="Detailed">
-					<template #icon>
-						<IconCheck :size="20" />
-					</template>
+					<svg-icon type="mdi" :path="mdiCheckPath"></svg-icon>
 				</NcAppNavigationItem>
 			</NcAppNavigation>
 		</div>
@@ -28,15 +24,17 @@
 	import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 	import { NcAppNavigationToggle } from '@nextcloud/vue'
 	import { emit } from '@nextcloud/event-bus'
-	import IconCheck from 'vue-material-design-icons/Check';
+	import SvgIcon from '@jamescoyle/vue-icon';
+	import { mdiCheck } from '@mdi/js';
 
 	export default {
 		components: {
-			IconCheck,
+			SvgIcon,
 			NcAppNavigationToggle,
 		},
 		provide() {
 			return {
+				mdiCheckPath: mdiCheck,
 				'NcContent:setHasAppNavigation': () => {},
 			}
 		},
