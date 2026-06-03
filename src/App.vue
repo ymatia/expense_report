@@ -1,6 +1,6 @@
 <template>
-	<NcContent app-name="expense-report" id="app-content">
-		<NcAppNavigation>
+	<NcContent app-name="expense-report" id="content" class="app-expense-report">
+		<NcAppNavigation id="app-navigation">
 			<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" id="content"/>
 			<template #list>
 				<NcAppNavigationItem name="Finance Overview" class="exprep_navigation">
@@ -11,7 +11,8 @@
 				</NcAppNavigationItem>
 			</template>
 		</NcAppNavigation>
-		<NcAppContent>
+		<NcAppContent id="app-content">
+			<div id="app-navigation-toggle" class="icon-menu"></div>
 			Select a report from the left
 		</NcAppContent>
 	</NcContent>
