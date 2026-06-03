@@ -53,11 +53,14 @@
 	}
 	
 	.exprep_navigation {
-		width: 250px;
-	}
+		max-width: 250px;
+		flex: 0 0 25%;
+		order: -1;
+   }
 	
 	.exprep_content {
-		width: auto;
+		flex: 0 0 75%;
+		margin-right: auto;
 	}
 
 </style>
