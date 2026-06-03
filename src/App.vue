@@ -29,7 +29,7 @@
 	// import NcAppNavigationToggle from '@nextcloud/vue/components/NcAppNavigationToggle'
 	import { NcAppNavigationToggle } from '@nextcloud/vue'
 	import { emit } from '@nextcloud/event-bus'
-	import IconCheck from 'vue-material-design-icons/Check'
+	import IconCheck from 'vue-material-design-icons/Check.vue'
 
 	export default {
 		components: {
