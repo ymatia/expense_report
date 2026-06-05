@@ -19,9 +19,9 @@
 
 <script>
     // UI Components
-	import { NcContent, NcAppNavigation, NcAppNavigationItem, NcAppContent } from '@nextcloud/vue'
+	import { NcContent, NcAppNavigation, NcAppNavigationItem, NcAppContent } from '@nextcloud/vue';
 	// Handling of actions
-	import { emit } from '@nextcloud/event-bus'
+	import { emit } from '@nextcloud/event-bus';
 	// Icons
 	import SvgIcon from '@jamescoyle/vue-icon';
 	import { mdiCheck } from '@mdi/js';
@@ -32,17 +32,12 @@
 			NcAppNavigation, 
 			NcAppNavigationItem,
 			NcAppContent, 
-			SvgIcon,
-			svg-icon,
+			SvgIcon
 		},
 		provide() {
 			return {
-				mdiCheckPath: mdiCheck,
+				mdiCheckPath: mdiCheck
 			}
-		},
-		data() {
-			return {
-			}
-		},
+		}
 	}
 </script>
