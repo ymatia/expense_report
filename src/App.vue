@@ -20,9 +20,7 @@
 
 <script>
     // UI Components
-	import NcContent from '@nextcloud/vue/components/NcContent'
-	import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
-	import NcAppContent from '@nextcloud/vue/components/NcAppContent'
+	import { NcContent, NcAppNavigation, NcAppNavigationItem, NcAppContent } from '@nextcloud/vue'
 	// Handling of actions
 	import { emit } from '@nextcloud/event-bus'
 	// Icons
@@ -31,6 +29,10 @@
 
 	export default {
 		components: {
+			NcContent, 
+			NcAppNavigation, 
+			NcAppNavigationItem,
+			NcAppContent, 
 			SvgIcon,
 		},
 		provide() {
