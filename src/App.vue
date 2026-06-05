@@ -12,7 +12,7 @@
 			</template>
 		</NcAppNavigation>
 		<NcAppContent>
-			Select a report from the left
+			<br/><br/>Select a report from the left
 		</NcAppContent>
 	</NcContent>
 </template>
@@ -34,9 +34,9 @@
 			NcAppContent, 
 			SvgIcon
 		},
-		provide() {
+		data() {
 			return {
-				mdiCheckPath: mdiCheck
+				mdiCheckPath: mdiCheck,
 			}
 		}
 	}
