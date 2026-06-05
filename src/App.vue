@@ -44,12 +44,3 @@
 		},
 	}
 </script>
-
-<style lang="scss" scoped>
-	#app-content {
-		transition: margin-left 100ms ease;
-		position: relative;
-		overflow-x: hidden;
-		align-items: stretch;
-	}
-</style>
