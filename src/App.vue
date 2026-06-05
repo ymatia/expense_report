@@ -1,9 +1,9 @@
 <template>
-	<NcContent app-name="expense-report" id="content" class="app-expense-report">
-		<NcAppNavigation id="app-navigation">
-			<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports" id="content"/>
+	<NcContent app-name="expense-report">
+		<NcAppNavigation>
+			<NcAppNavigationCaption heading-id="navigation-heading" is-heading name="Reports"/>
 			<template #list>
-				<NcAppNavigationItem name="Finance Overview" class="exprep_navigation">
+				<NcAppNavigationItem name="Finance Overview">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
 				</NcAppNavigationItem>
 				<NcAppNavigationItem name="Detailed">
@@ -11,8 +11,7 @@
 				</NcAppNavigationItem>
 			</template>
 		</NcAppNavigation>
-		<NcAppContent id="app-content">
-			<div id="app-navigation-toggle" class="icon-menu"></div>
+		<NcAppContent>
 			Select a report from the left
 		</NcAppContent>
 	</NcContent>
@@ -34,6 +33,7 @@
 			NcAppNavigationItem,
 			NcAppContent, 
 			SvgIcon,
+			svg-icon,
 		},
 		provide() {
 			return {
