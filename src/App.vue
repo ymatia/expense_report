@@ -6,7 +6,7 @@
 				<NcAppNavigationItem name="Finance Overview" to="/financeoverview">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
 				</NcAppNavigationItem>
-				<NcAppNavigationItem name="Detailed" to="/financeoverview">
+				<NcAppNavigationItem name="Detailed" to="/detailed">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
 				</NcAppNavigationItem>
 			</template>
@@ -30,8 +30,6 @@
 	// Icons
 	import SvgIcon from '@jamescoyle/vue-icon';
 	import { mdiCheck } from '@mdi/js';
-	// Vue-Router
-	import { createMemoryHistory, createRouter } from 'vue-router'
 
 	export default {
 		components: {
@@ -47,18 +45,5 @@
 			}
 		}
 	}
-	
-	import HomeView from './HomeView.vue'
-	import AboutView from './AboutView.vue'
-
-	const routes = [
-	  { path: '/', component: HomeView },
-	  { path: '/about', component: AboutView },
-	]
-
-	export const router = createRouter({
-	  history: createMemoryHistory(),
-	  routes,
-	})
 
 </script>
