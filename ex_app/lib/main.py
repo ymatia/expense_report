@@ -417,7 +417,7 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 @APP.get("/data")
 async def report_data(
-    nc: Annotated[NextcloudApp, Depends(nc_app)],
+    request: Request,
     year: int | None = None,
 ):
     global token
@@ -427,11 +427,9 @@ async def report_data(
     report_year = year or datetime.today().year
     try:
         payload = await to_thread(get_report_payload, report_year)
-        nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
         print(f"Loaded report data for {report_year}")
         return JSONResponse(content=payload)
     except Exception as exc:
-        nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
         print(f"Failed to load report data: {exc}")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
