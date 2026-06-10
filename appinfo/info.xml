@@ -57,6 +57,11 @@
 				<access_level>USER</access_level>
 			</route>
 			<route>
+				<url>^/data$</url>
+				<verb>GET</verb>
+				<access_level>USER</access_level>
+			</route>
+			<route>
 				<url>^/financeoverview$</url>
 				<verb>GET</verb>
 				<access_level>USER</access_level>
