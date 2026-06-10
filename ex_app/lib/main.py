@@ -13,7 +13,7 @@ from typing import Annotated, Any
 import numpy as np
 import pandas as pd
 import requests
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from nc_py_api import NextcloudApp
 from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_handlers
@@ -416,12 +416,7 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 
 @APP.get("/data")
-async def report_data(
-    request: Request,
-    *,
-    nc: Annotated[NextcloudApp, Depends(nc_app)],
-    year: int | None = None,
-):
+async def report_data(request: Request, year: int | None = None):
     global token
     print("in data")
     token = request.headers.get("X-Nextcloud-Token")
@@ -429,11 +424,11 @@ async def report_data(
     report_year = year or datetime.today().year
     try:
         payload = await to_thread(get_report_payload, report_year)
-        nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
+        # nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
         print(f"Loaded report data for {report_year}")
         return JSONResponse(content=payload)
     except Exception as exc:
-        nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
+        # nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
         print(f"Failed to load report data: {exc}")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
