@@ -24,7 +24,10 @@ def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
     nc_url = os.environ["NEXTCLOUD_URL"]
     print(f"nc_url={nc_url}")
     app_id = os.environ["APP_ID"]
+    print(f"app_id={app_id}")
     app_secret = os.environ["APP_SECRET"]
+    print(f"app_secret={app_secret}")
+    print(os.environ)
 
     if payload is None:
         r = requests.get(
