@@ -43,12 +43,12 @@ def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
         )
 
     if r.status_code not in (200, 201, 204):
-        raise RuntimeError(f"Request failed ({r.status_code}) for {url}: {r.text}")
+        raise RuntimeError(f"Request failed ({r.status_code}) for {nc_url}{url}: {r.text}")
     return json.loads(r.text)
 
 
 def _fetch_selection_values(table_id: int) -> tuple[dict[int, str], dict[int, str]]:
-    columns_url = f"/index.php/apps/tables/api/1/tables/{table_id}/columns"
+    columns_url = f"/apps/tables/api/1/tables/{table_id}/columns"
     columns = _request_json(columns_url)
     categories: dict[int, str] = {}
     sub_categories: dict[int, str] = {0: ""}
@@ -63,7 +63,7 @@ def _fetch_selection_values(table_id: int) -> tuple[dict[int, str], dict[int, st
 
 
 def _fetch_rows(table_id: int) -> pd.DataFrame:
-    rows_url = f"/index.php/apps/tables/api/1/tables/{table_id}/rows/simple"
+    rows_url = f"/apps/tables/api/1/tables/{table_id}/rows/simple"
     rows = _request_json(rows_url)
     return pd.DataFrame(np.vstack(rows[1:]), columns=rows[0])
 
