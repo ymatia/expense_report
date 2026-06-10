@@ -417,8 +417,8 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 @APP.get("/data")
 async def report_data(
-    nc: Annotated[NextcloudApp, Depends(nc_app)],
     request: Request,
+    nc: Annotated[NextcloudApp, Depends(nc_app)],
     year: int | None = None,
 ):
     global token
