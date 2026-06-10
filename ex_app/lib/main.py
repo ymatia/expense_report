@@ -418,6 +418,7 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 @APP.get("/data")
 async def report_data(
     request: Request,
+    *,
     nc: Annotated[NextcloudApp, Depends(nc_app)],
     year: int | None = None,
 ):
