@@ -21,30 +21,15 @@ from fastapi.staticfiles import StaticFiles
 
 
 def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
+    global token
     nc_url = os.environ["NEXTCLOUD_URL"]
     print(f"nc_url={nc_url}")
-    app_id = os.environ["APP_ID"]
-    print(f"app_id={app_id}")
-    app_secret = os.environ["APP_SECRET"]
-    print(f"app_secret={app_secret}")
+    # app_id = os.environ["APP_ID"]
+    # print(f"app_id={app_id}")
+    # app_secret = os.environ["APP_SECRET"]
+    # print(f"app_secret={app_secret}")
     # print(os.environ)
-    
-    r = requests.post(
-            f"{nc_url}/apps/oauth2/api/v1/token"
-            ,{
-              "grant_type": "authorization_code",
-              "code": "",
-              "refresh_token": "",
-              "client_id": app_id,
-              "client_secret": app_secret
-            }
-            ,headers={"OCS-APIRequest": "true"}
-            ,timeout=60
-        )
-    print(r.status_code)
-    print(r.text)
-    auth_response = json.loads(r.text)
-    token = auth_response["access_token"]
+    print(f"token={token}")
 
     if payload is None:
         r = requests.get(
@@ -435,7 +420,10 @@ async def report_data(
     nc: Annotated[NextcloudApp, Depends(nc_app)],
     year: int | None = None,
 ):
+    global token
     print("in data")
+    token = request.headers.get("X-Nextcloud-Token")
+    print(f"token={token}")
     report_year = year or datetime.today().year
     try:
         payload = await to_thread(get_report_payload, report_year)
