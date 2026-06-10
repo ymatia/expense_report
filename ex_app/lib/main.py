@@ -27,13 +27,29 @@ def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
     print(f"app_id={app_id}")
     app_secret = os.environ["APP_SECRET"]
     print(f"app_secret={app_secret}")
-    print(os.environ)
+    # print(os.environ)
+    
+    r = requests.post(
+            f"{nc_url}/apps/oauth2/api/v1/token"
+            ,{
+              "grant_type": "authorization_code",
+              "code": "",
+              "refresh_token": "",
+              "client_id": app_id,
+              "client_secret": app_secret
+            }
+            ,headers={"OCS-APIRequest": "true"}
+            ,timeout=60
+        )
+    print(r.status_code)
+    print(r.text)
+    auth_response = json.loads(r.text)
+    token = auth_response["access_token"]
 
     if payload is None:
         r = requests.get(
             f"{nc_url}{url}"
-            ,auth=(app_id, app_secret)
-            ,headers={"OCS-APIRequest": "true"}
+            ,headers={"OCS-APIRequest": "true", "Authorization": f"Bearer {token}"}
             ,timeout=60
         )
     else:
