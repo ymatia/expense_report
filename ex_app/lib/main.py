@@ -411,17 +411,6 @@ APP.mount("/img", StaticFiles(directory="../img"), name="img")
 APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 
-@APP.get("/", response_class=HTMLResponse)
-async def root_page():
-    print("In root_page")
-    return HTMLResponse(content=build_app_html())
-
-@APP.get("/report", response_class=HTMLResponse)
-async def report_page():
-    print("In report_page")
-    return HTMLResponse(content=build_app_html())
-
-
 @APP.get("/data")
 async def report_data(
     nc: Annotated[NextcloudApp, Depends(nc_app)],
