@@ -435,10 +435,10 @@ async def report_data(request: Request, year: int | None = None):
     url = f"{nc_url}/apps/tables/api/1/tables/{table_id}/columns"
     print(f"url={url}")
     print(headers)
-    r = session.get(f"{nc_url}{url}", headers=headers, timeout=60)
+    r = session.get(f"{url}", headers=headers, timeout=60)
     print(r.text)
     if r.status_code not in (200, 201, 204):
-        raise RuntimeError(f"Request failed ({r.status_code}) for {nc_url}{url}: {r.text}")
+        raise RuntimeError(f"Request failed ({r.status_code}) for {url}: {r.text}")
     payload = json.loads(r.text)
     return JSONResponse(content=payload)
 
