@@ -21,30 +21,17 @@ from fastapi.staticfiles import StaticFiles
 
 
 def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
-    global token
+    global session
     nc_url = os.environ["NEXTCLOUD_URL"]
-    print(f"nc_url={nc_url}")
-    # app_id = os.environ["APP_ID"]
-    # print(f"app_id={app_id}")
-    # app_secret = os.environ["APP_SECRET"]
-    # print(f"app_secret={app_secret}")
-    # print(os.environ)
-    print(f"token={token}")
+    headers = {
+        "OCS-APIRequest": "true",
+        'accept': 'application/json',
+    }
 
     if payload is None:
-        r = requests.get(
-            f"{nc_url}{url}"
-            ,headers={"OCS-APIRequest": "true", "Authorization": f"Bearer {token}"}
-            ,timeout=60
-        )
+        r = session.get(f"{nc_url}{url}", headers=headers, timeout=60)
     else:
-        r = requests.post(
-            f"{nc_url}{url}"
-            ,auth=(app_id, app_secret)
-            ,headers={"OCS-APIRequest": "true"}
-            ,json=payload
-            ,timeout=60
-        )
+        r = session.post(f"{nc_url}{url}", headers=headers, json=payload, timeout=60)
 
     if r.status_code not in (200, 201, 204):
         raise RuntimeError(f"Request failed ({r.status_code}) for {nc_url}{url}: {r.text}")
@@ -139,19 +126,20 @@ def get_report_payload(year: int) -> dict[str, Any]:
     facts_table_id = int(os.getenv("NC_FACTS_TABLE_ID", "6"))
     debts_table_id = int(os.getenv("NC_DEBTS_TABLE_ID", "10"))
     report = _build_report_data(year, facts_table_id, debts_table_id)
-    return {
-        "year": year,
-        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "tables": {
-            "all_expenses": _to_records(report["all_expenses"]),
-            "monthly": _to_records(report["monthly"]),
-            "category": _to_records(report["category"]),
-            "cash_flow": _to_records(report["cash_flow"]),
-            "cash_flow_01": _to_records(report["cash_flow_01"]),
-            "debts": _to_records(report["debts"]),
-            "debts_summary": _to_records(report["debts_summary"]),
-        },
-    }
+    return _to_records(report["monthly"])
+    # return {
+    #     "year": year,
+    #     "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    #     "tables": {
+    #         "all_expenses": _to_records(report["all_expenses"]),
+    #         "monthly": _to_records(report["monthly"]),
+    #         "category": _to_records(report["category"]),
+    #         "cash_flow": _to_records(report["cash_flow"]),
+    #         "cash_flow_01": _to_records(report["cash_flow_01"]),
+    #         "debts": _to_records(report["debts"]),
+    #         "debts_summary": _to_records(report["debts_summary"]),
+    #     },
+    # }
 
 
 def build_app_html() -> str:
@@ -380,15 +368,6 @@ def build_app_html() -> str:
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
     print(f"enabled={enabled}")
     if enabled:
-        # nc.ui.resources.set_initial_state(
-        #     "top_menu",
-        #     "report",
-        #     "expense-report_state",
-        #     {
-        #         "initial_value": "test init value",
-        #         "initial_sensitive_value": "test_sensitive_value",
-        #     },
-        # )
         nc.ui.resources.set_script("top_menu", "report", "../../../../../nextcloud/index.php/apps/app_api/proxy/expense-report/js/expense-report-main")
         nc.ui.top_menu.register("report", "Expense Report", "img/app.svg")
         nc.log(LogLvl.INFO, "Expense report app enabled")
@@ -406,8 +385,6 @@ async def lifespan(app: FastAPI):
 
 
 APP = FastAPI(lifespan=lifespan)
-# Public probes: /heartbeat is registered by set_handlers() and always exempt.
-# Also exempt /health so Docker or admins can curl it without AppAPI headers.
 APP.add_middleware(AppAPIAuthMiddleware)
 
 # Serve static files (JS, CSS, icons, etc.)
@@ -417,30 +394,27 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 @APP.get("/data")
 async def report_data(request: Request, year: int | None = None):
-    global token
-    print("in data")
+    global session
+    # Store the current cookies for future REST API calls
     cookies_str = request.headers.get("Cookie")
     cookies_arr = cookies_str.split("; ")
     cookies = {x.split("=")[0]:x.split("=")[1] for x in cookies_arr}
-    print(f"cookies={cookies}")
     session = requests.Session()
     session.cookies.update(cookies)
-    headers = {
-        "OCS-APIRequest": "true",
-        'accept': 'application/json',
-    }
-    nc_url = os.environ["NEXTCLOUD_URL"]
-    print(f"nc_url={nc_url}")
-    table_id = 6
-    url = f"{nc_url}/apps/tables/api/1/tables/{table_id}/columns"
-    print(f"url={url}")
-    print(headers)
-    r = session.get(f"{url}", headers=headers, timeout=60)
-    print(r.text)
-    if r.status_code not in (200, 201, 204):
-        raise RuntimeError(f"Request failed ({r.status_code}) for {url}: {r.text}")
-    payload = json.loads(r.text)
-    return JSONResponse(content=payload)
+
+    # default for report_year
+    report_year = year or datetime.today().year
+    
+    # Fetch the data and reply back
+    try:
+        payload = await to_thread(get_report_payload, report_year)
+        # nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
+        print(f"Loaded report data for {report_year}")
+        return JSONResponse(content=payload)
+    except Exception as exc:
+        # nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
+        print(f"Failed to load report data: {exc}")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@
 		"@nextcloud/router": "^3.1.0",
 		"@nextcloud/event-bus": "^3.3.3",
 		"vue": "^3.5.34",
+		"vue-json-to-html-table": "",
 		"@mdi/js": "",
 		"@jamescoyle/vue-icon": "",
 		"browserslist-to-esbuild": "^2.1.1",

@@ -1,6 +1,6 @@
 <template>
 	<div id="DetailedView">
-		{{ info }}
+		<VueJsonToHtmlTable :data="jsonData" />
 	</div>
 </template>
 
@@ -8,17 +8,21 @@
 	import axios from '@nextcloud/axios'
 	import { APP_API_PROXY_URL_PREFIX, EX_APP_ID } from './AppAPI.js'
 	import { generateUrl } from '@nextcloud/router'
+	import VueJsonToHtmlTable from 'vue-json-to-html-table';
 
 	export default {
+		components: {
+			VueJsonToHtmlTable
+		},
 		data () {
 			return {
-				info: null
+				jsonData: null
 			}
 		},
 		mounted () {
 			axios
 				.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data`))
-				.then(response => (this.info = response))
+				.then(response => (this.jsonData = response))
 		}
 	}
 </script>
