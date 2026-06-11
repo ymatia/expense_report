@@ -419,7 +419,7 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 async def report_data(request: Request, year: int | None = None):
     global token
     print("in data")
-    token = request.headers.get("X-Nextcloud-Token")
+    token = request.headers.get("requesttoken")
     print(f"token={token}")
     report_year = year or datetime.today().year
     try:
