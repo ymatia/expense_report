@@ -420,9 +420,9 @@ async def report_data(request: Request, year: int | None = None):
     global token
     print("in data")
     cookies = request.headers.get("Cookie")
-    cookie_arr = cookies.split("; ")
-    cookie_dict = {x.split("=")[0]:x.split("=")[1] for x in cookies_arr}
-    token = cookie_dict["nc_token"]
+    cookies_arr = cookies.split("; ")
+    cookies_dict = {x.split("=")[0]:x.split("=")[1] for x in cookies_arr}
+    token = cookies_dict["nc_token"]
     print(f"token={token}")
     report_year = year or datetime.today().year
     try:
