@@ -419,21 +419,27 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 async def report_data(request: Request, year: int | None = None):
     global token
     print("in data")
-    cookies = request.headers.get("Cookie")
-    cookies_arr = cookies.split("; ")
-    cookies_dict = {x.split("=")[0]:x.split("=")[1] for x in cookies_arr}
-    token = cookies_dict["nc_token"]
-    print(f"token={token}")
-    report_year = year or datetime.today().year
-    try:
-        payload = await to_thread(get_report_payload, report_year)
-        # nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
-        print(f"Loaded report data for {report_year}")
-        return JSONResponse(content=payload)
-    except Exception as exc:
-        # nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
-        print(f"Failed to load report data: {exc}")
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    cookies_str = request.headers.get("Cookie")
+    cookies_arr = cookies_str.split("; ")
+    cookies = {x.split("=")[0]:x.split("=")[1] for x in cookies_arr}
+    print(f"cookies={cookies}")
+    session = requests.Session()
+    session.cookies.update(cookies)
+    headers = {
+        "OCS-APIRequest": "true",
+        'accept': 'application/json',
+    }
+    nc_url = os.environ["NEXTCLOUD_URL"]
+    print(f"nc_url={nc_url}")
+    url = f"{nc_url}/apps/tables/api/1/tables/{table_id}/columns"
+    print(f"url={url}")
+    print(headers)
+    r = session.get(f"{nc_url}{url}", headers=headers, timeout=60)
+    print(r.text)
+    if r.status_code not in (200, 201, 204):
+        raise RuntimeError(f"Request failed ({r.status_code}) for {nc_url}{url}: {r.text}")
+    payload = json.loads(r.text)
+    return JSONResponse(content=payload)
 
 
 if __name__ == "__main__":
