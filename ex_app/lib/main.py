@@ -84,6 +84,7 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
 
     monthly = df.where(df["Category"] == "Actual")
     monthly = monthly[["Month", "Sub-Category", "Amount"]].groupby(["Month", "Sub-Category"], as_index=False).sum()
+    print(monthly)
     monthly = monthly.pivot_table(values="Month", columns="Sub-Category", index="Month", aggfunc="sum", fill_value=0)
     monthly["sum"] = monthly[list(monthly.columns)].sum(axis=1)
     monthly.loc["Average"] = monthly.mean()
