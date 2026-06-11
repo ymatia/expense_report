@@ -431,6 +431,7 @@ async def report_data(request: Request, year: int | None = None):
     }
     nc_url = os.environ["NEXTCLOUD_URL"]
     print(f"nc_url={nc_url}")
+    table_id = 6
     url = f"{nc_url}/apps/tables/api/1/tables/{table_id}/columns"
     print(f"url={url}")
     print(headers)
