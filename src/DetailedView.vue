@@ -8,6 +8,7 @@
 	import axios from '@nextcloud/axios'
 	import { APP_API_PROXY_URL_PREFIX, EX_APP_ID } from './AppAPI.js'
 	import { generateUrl } from '@nextcloud/router'
+	import { EasyDataTable } from Vue3EasyDataTable
 
 	export default {
 		components: {
