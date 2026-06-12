@@ -1,6 +1,6 @@
 <template>
 	<div id="DetailedView">
-		<VueJsonToHtmlTable :data="jsonData" />
+		<EasyDataTable :headers="jsonData.headers" :items="jsonData.data" />
 	</div>
 </template>
 
@@ -8,15 +8,16 @@
 	import axios from '@nextcloud/axios'
 	import { APP_API_PROXY_URL_PREFIX, EX_APP_ID } from './AppAPI.js'
 	import { generateUrl } from '@nextcloud/router'
-	import VueJsonToHtmlTable from 'vue-json-to-html-table';
+	import Vue3EasyDataTable from 'vue3-easy-data-table';
+	import 'vue3-easy-data-table/dist/style.css';
 
 	export default {
 		components: {
-			VueJsonToHtmlTable
+			EasyDataTable 
 		},
 		data () {
 			return {
-				jsonData: null
+				jsonData: null				
 			}
 		},
 		mounted () {

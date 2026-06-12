@@ -89,10 +89,10 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     monthly = monthly.pivot_table(columns="Sub-Category", index="Month", aggfunc="sum", fill_value=0)
     print(monthly)  # Debug
     print(monthly.dtypes)  # Debug
-    monthly["sum"] = monthly[list(monthly.columns)].sum(axis=1)
+    monthly["Sum"] = monthly[list(monthly.columns)].sum(axis=1)
     monthly.loc["Average"] = monthly.mean()
     monthly = monthly.reset_index()
-    monthly.columns = [c[0] + "_" + c[1] for c in monthly.columns]
+    monthly.columns = ['_'.join(header).upper() for header in monthly.columns if header != ""]  # cleanup the headers
 
     by_category = df[["Category", "Sub-Category", "Amount"]].groupby(["Category", "Sub-Category"], as_index=False).sum()
 
@@ -132,7 +132,11 @@ def get_report_payload(year: int) -> dict[str, Any]:
     debts_table_id = int(os.getenv("NC_DEBTS_TABLE_ID", "10"))
     report = _build_report_data(year, facts_table_id, debts_table_id)
     report_dict = _to_records(report["monthly"])
-    json_obj = json.dumps(report_dict, indent=4, sort_keys=True, default=str)
+    report_headers_dict = { 
+        headers: [ {"text": x, "value": x} for x in report["monthly"].columns ],
+        data: report_dict
+    }
+    json_obj = json.dumps(report_headers_dict, indent=4, sort_keys=True, default=str)
     return json_obj
     # return {
     #     "year": year,
