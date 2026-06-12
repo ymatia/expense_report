@@ -19,6 +19,7 @@ from nc_py_api import NextcloudApp
 from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_handlers
 from fastapi.staticfiles import StaticFiles
 
+pd.options.future.infer_string = False  # resolve issue in Pandas 3.0 of exact type casting
 
 def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
     global session
