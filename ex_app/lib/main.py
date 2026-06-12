@@ -130,7 +130,9 @@ def get_report_payload(year: int) -> dict[str, Any]:
     facts_table_id = int(os.getenv("NC_FACTS_TABLE_ID", "6"))
     debts_table_id = int(os.getenv("NC_DEBTS_TABLE_ID", "10"))
     report = _build_report_data(year, facts_table_id, debts_table_id)
-    return _to_records(report["monthly"])
+    report_dict = _to_records(report["monthly"])
+    json_obj = json.dumps(report_dict, indent=4, sort_keys=True, default=str)
+    return json_obj
     # return {
     #     "year": year,
     #     "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -172,6 +174,17 @@ APP.add_middleware(AppAPIAuthMiddleware)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
 APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
+@APP.get("/reelusage")
+async def report_reelusage(request: Request, year: int | None = None):
+    query = """select ct.value as Reel, sum(cn.value) as "Reel Usage (g)"
+        from oc_tables_tables t
+        join oc_tables_columns cr on cr.table_id=t.id and cr.title='Reel'
+        join oc_tables_columns cw on cw.table_id=t.id and cw.title='Weight'
+        join oc_tables_row_cells_text ct on ct.column_id=cr.id
+        join oc_tables_row_cells_number cn on cn.column_id=cw.id and cn.row_id=ct.row_id
+        where t.title='3D Printing Log'
+        group by 1 order by 1 desc"""
+    
 
 @APP.get("/data")
 async def report_data(request: Request, year: int | None = None):
