@@ -86,8 +86,6 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
 
     monthly = df.where(df["Category"] == "Actual")  # Filter to include only Actual
     monthly = monthly[["Month", "Sub-Category", "Amount"]].groupby(["Month", "Sub-Category"], as_index=False).sum()  # Group by
-    print(monthly)  # Debug
-    print(monthly.dtypes)  # Debug
     monthly = monthly.pivot_table(columns="Sub-Category", index="Month", aggfunc="sum", fill_value=0)
     print(monthly)  # Debug
     print(monthly.dtypes)  # Debug
@@ -132,7 +130,7 @@ def get_report_payload(year: int) -> dict[str, Any]:
     facts_table_id = int(os.getenv("NC_FACTS_TABLE_ID", "6"))
     debts_table_id = int(os.getenv("NC_DEBTS_TABLE_ID", "10"))
     report = _build_report_data(year, facts_table_id, debts_table_id)
-    return _to_records(report["monthly"])
+    return {"table": _to_records(report["monthly"])}
     # return {
     #     "year": year,
     #     "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -146,229 +144,6 @@ def get_report_payload(year: int) -> dict[str, Any]:
     #         "debts_summary": _to_records(report["debts_summary"]),
     #     },
     # }
-
-
-def build_app_html() -> str:
-    print("in build_app_html")
-    return """<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Expense Report</title>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <style>
-    :root {
-      color-scheme: light dark;
-      --bg: #f6f7f9;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #d1d5db;
-      --accent: #0082c9;
-    }
-    body {
-      margin: 0;
-      padding: 24px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-    }
-    h1 { margin: 0 0 8px; }
-    .meta { color: var(--muted); margin-bottom: 16px; }
-    .controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    input, select, button {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 14px;
-      background: #fff;
-      color: #111827;
-    }
-    button { cursor: pointer; }
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 10px 0 14px;
-    }
-    .tab.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      font-weight: 600;
-    }
-    .table-wrap {
-      overflow: auto;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 700px;
-    }
-    th, td {
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      padding: 8px;
-      white-space: nowrap;
-    }
-    thead th {
-      position: sticky;
-      top: 0;
-      background: #f3f4f6;
-    }
-  </style>
-</head>
-<body>
-  <div id="app" class="container">
-    <h1>Expense Report</h1>
-    <p class="meta">
-      Source: {{ meta.base_url || "-" }} | Generated at: {{ meta.generated_at || "-" }}
-    </p>
-
-    <div class="controls">
-      <input type="number" v-model.number="year" placeholder="Year" min="2000" max="2100" />
-      <input type="text" v-model.trim="textFilter" placeholder="Filter text (description/category/sub-category)" />
-      <select v-model="categoryFilter">
-        <option value="">All categories</option>
-        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-      </select>
-      <button class="btn-primary" @click="loadReport">Load Report</button>
-    </div>
-
-    <div class="tabs">
-      <button
-        v-for="tab in tabs"
-        :key="tab.key"
-        class="tab"
-        :class="{ active: activeTab === tab.key }"
-        @click="activeTab = tab.key">
-        {{ tab.label }} ({{ displayedRows(tab.key).length }})
-      </button>
-    </div>
-
-    <div class="table-wrap">
-      <table v-if="activeRows.length > 0">
-        <thead>
-          <tr>
-            <th v-for="col in activeColumns" :key="col">{{ col }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, idx) in activeRows" :key="idx">
-            <td v-for="col in activeColumns" :key="col">{{ row[col] }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-else style="padding: 16px; color: #6b7280;">No data for this selection.</div>
-    </div>
-  </div>
-
-  <script>
-    const { createApp } = Vue;
-    createApp({
-      data() {
-        const now = new Date();
-        return {
-          year: now.getFullYear(),
-          textFilter: "",
-          categoryFilter: "",
-          activeTab: "all_expenses",
-          meta: {},
-          tables: {
-            all_expenses: [],
-            monthly: [],
-            category: [],
-            cash_flow: [],
-            cash_flow_01: [],
-            debts: [],
-            debts_summary: []
-          },
-          tabs: [
-            { key: "all_expenses", label: "All Expenses" },
-            { key: "monthly", label: "Monthly" },
-            { key: "category", label: "Category" },
-            { key: "cash_flow", label: "Cash Flow" },
-            { key: "cash_flow_01", label: "Cash Flow 01" },
-            { key: "debts", label: "Debts" },
-            { key: "debts_summary", label: "Debts Summary" }
-          ]
-        };
-      },
-      computed: {
-        categories() {
-          const set = new Set();
-          for (const row of this.tables.all_expenses || []) {
-            if (row.Category) set.add(row.Category);
-          }
-          return Array.from(set).sort();
-        },
-        activeRows() {
-          return this.displayedRows(this.activeTab);
-        },
-        activeColumns() {
-          const rows = this.activeRows;
-          return rows.length ? Object.keys(rows[0]) : [];
-        }
-      },
-      methods: {
-        displayedRows(tableKey) {
-          const rows = this.tables[tableKey] || [];
-          if (tableKey !== "all_expenses") return rows;
-          return rows.filter((row) => {
-            const catOk = !this.categoryFilter || row.Category === this.categoryFilter;
-            const text = this.textFilter.toLowerCase();
-            const hay = `${row.Description || ""} ${row.Category || ""} ${row["Sub-Category"] || ""}`.toLowerCase();
-            const textOk = !text || hay.includes(text);
-            return catOk && textOk;
-          });
-        },
-        async loadReport() {
-          const res = await fetch(`/data?year=${this.year}`);
-          if (!res.ok) {
-            const payload = await res.json().catch(() => ({}));
-            throw new Error(payload.detail || "Failed loading report");
-          }
-          const payload = await res.json();
-          this.meta = {
-            base_url: payload.base_url,
-            generated_at: payload.generated_at
-          };
-          this.tables = payload.tables;
-        }
-      },
-      async mounted() {
-        try {
-          await this.loadReport();
-        } catch (err) {
-          console.error(err);
-          alert(`Could not load report: ${err.message}`);
-        }
-      }
-    }).mount("#app");
-  </script>
-</body>
-</html>
-"""
 
 
 def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
@@ -414,6 +189,7 @@ async def report_data(request: Request, year: int | None = None):
     # Fetch the data and reply back
     # try:
     payload = await to_thread(get_report_payload, report_year)
+    print(payload)
     # nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
     print(f"Loaded report data for {report_year}")
     return JSONResponse(content=payload)
