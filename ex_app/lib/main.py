@@ -92,6 +92,7 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     monthly["sum"] = monthly[list(monthly.columns)].sum(axis=1)
     monthly.loc["Average"] = monthly.mean()
     monthly = monthly.reset_index()
+    monthly.columns = [c[0] + "_" + c[1] for c in monthly.columns]
 
     by_category = df[["Category", "Sub-Category", "Amount"]].groupby(["Category", "Sub-Category"], as_index=False).sum()
 
