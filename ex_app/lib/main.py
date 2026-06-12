@@ -130,7 +130,7 @@ def get_report_payload(year: int) -> dict[str, Any]:
     facts_table_id = int(os.getenv("NC_FACTS_TABLE_ID", "6"))
     debts_table_id = int(os.getenv("NC_DEBTS_TABLE_ID", "10"))
     report = _build_report_data(year, facts_table_id, debts_table_id)
-    return {"table": _to_records(report["monthly"])}
+    return _to_records(report["monthly"])
     # return {
     #     "year": year,
     #     "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -189,10 +189,10 @@ async def report_data(request: Request, year: int | None = None):
     # Fetch the data and reply back
     # try:
     payload = await to_thread(get_report_payload, report_year)
-    print(payload)
     # nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
     print(f"Loaded report data for {report_year}")
-    return JSONResponse(content=payload)
+    print(payload)
+    return JSONResponse(content=payload, safe=False))
     # except Exception as exc:
     #     # nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
     #     print(f"Failed to load report data: {exc}")
