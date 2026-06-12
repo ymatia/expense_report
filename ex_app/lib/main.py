@@ -192,7 +192,7 @@ async def report_data(request: Request, year: int | None = None):
     # nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
     print(f"Loaded report data for {report_year}")
     print(payload)
-    return JSONResponse(content=payload, safe=False))
+    return JSONResponse(content=payload, safe=False)
     # except Exception as exc:
     #     # nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
     #     print(f"Failed to load report data: {exc}")
