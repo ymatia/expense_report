@@ -19,7 +19,7 @@ from nc_py_api import NextcloudApp
 from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_handlers
 from fastapi.staticfiles import StaticFiles
 
-pd.options.future.infer_string = False  # resolve issue in Pandas 3.0 of exact type casting
+# pd.options.future.infer_string = False  # resolve issue in Pandas 3.0 of exact type casting
 
 def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
     global session
@@ -74,6 +74,7 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     df["Category"] = df.apply(lambda row: categories.get(int(row["Category"]), "Unknown"), axis=1)
     df["Sub-Category"] = df.apply(lambda row: sub_categories.get(int(row["Sub-Category"] or 0), ""), axis=1)
     df["Amount"] = df.apply(lambda row: float(row["Amount"]), axis=1)
+    df["Amount"] = df["Amount"].astype(float)
 
     debts_df.dropna(inplace=True)
     debts_df["How much €"] = debts_df.apply(lambda row: float(row["How much €"]), axis=1)
@@ -86,6 +87,7 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     monthly = df.where(df["Category"] == "Actual")
     monthly = monthly[["Month", "Sub-Category", "Amount"]].groupby(["Month", "Sub-Category"], as_index=False).sum()
     print(monthly)
+    print(monthly.dtypes)
     monthly = monthly.pivot_table(values="Month", columns="Sub-Category", index="Month", aggfunc="sum", fill_value=0)
     monthly["sum"] = monthly[list(monthly.columns)].sum(axis=1)
     monthly.loc["Average"] = monthly.mean()
