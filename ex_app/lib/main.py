@@ -15,7 +15,7 @@ import pandas as pd
 import requests
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
-from nc_py_api import NextcloudApp
+from nc_py_api import NextcloudApp, CONFIG, TABLES, execute_fetchall
 from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_handlers
 from fastapi.staticfiles import StaticFiles
 
@@ -133,8 +133,8 @@ def get_report_payload(year: int) -> dict[str, Any]:
     report = _build_report_data(year, facts_table_id, debts_table_id)
     report_dict = _to_records(report["monthly"])
     report_headers_dict = { 
-        headers: [ {"text": x, "value": x} for x in report["monthly"].columns ],
-        data: report_dict
+        "headers": [ {"text": x, "value": x} for x in report["monthly"].columns ],
+        "data": report_dict
     }
     json_obj = json.dumps(report_headers_dict, indent=4, sort_keys=True, default=str)
     return json_obj
@@ -189,7 +189,7 @@ async def report_reelusage(request: Request, year: int | None = None):
         join oc_tables_row_cells_number cn on cn.column_id=cw.id and cn.row_id=ct.row_id
         where t.title='3D Printing Log'
         group by 1 order by 1 desc"""
-    
+    return execute_fetchall(query)
 
 @APP.get("/data")
 async def report_data(request: Request, year: int | None = None):
