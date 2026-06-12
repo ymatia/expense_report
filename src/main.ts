@@ -18,4 +18,5 @@ export const router = createRouter({
 
 const app = createApp(App)
 app.use(router)
+app.component('EasyDataTable', Vue3EasyDataTable)
 app.mount('#content')
