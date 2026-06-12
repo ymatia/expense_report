@@ -15,7 +15,7 @@ import pandas as pd
 import requests
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
-from nc_py_api import NextcloudApp, CONFIG, TABLES, execute_fetchall
+from nc_py_api import NextcloudApp, execute_fetchall
 from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_handlers
 from fastapi.staticfiles import StaticFiles
 

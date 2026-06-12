@@ -3,14 +3,18 @@ import App from './App.vue'
 
 // Vue-Router
 import { createMemoryHistory, createRouter } from 'vue-router'
+
 import FinanceOverviewView from './FinanceOverviewView.vue'
 import DetailedView from './DetailedView.vue'
+import ReelUsageView from './ReelUsageView.vue'
+
 import Vue3EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css';
 
 const routes = [
   { path: '/financeoverview', component: FinanceOverviewView },
   { path: '/detailed', component: DetailedView },
+  { path: '/reelusage', component: ReeUsageView },
 ]
 
 export const router = createRouter({

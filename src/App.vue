@@ -9,6 +9,9 @@
 				<NcAppNavigationItem name="Detailed" to="/detailed">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
 				</NcAppNavigationItem>
+				<NcAppNavigationItem name="Reel Usage" to="/reelusage">
+					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
+				</NcAppNavigationItem>
 			</template>
 		</NcAppNavigation>
 		<NcAppContent>
