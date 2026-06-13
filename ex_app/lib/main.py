@@ -15,7 +15,7 @@ import pandas as pd
 import requests
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
-from nc_py_api import NextcloudApp, execute_fetchall
+from nc_py_api import NextcloudApp  # , execute_fetchall
 from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_handlers
 from fastapi.staticfiles import StaticFiles
 
@@ -181,7 +181,7 @@ APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 @APP.get("/reelusage")
 async def report_reelusage(request: Request, year: int | None = None):
-    query = """select ct.value as Reel, sum(cn.value) as "Reel Usage (g)"
+    query = """select ct.value as REEL, sum(cn.value) as USAGE
         from oc_tables_tables t
         join oc_tables_columns cr on cr.table_id=t.id and cr.title='Reel'
         join oc_tables_columns cw on cw.table_id=t.id and cw.title='Weight'
@@ -189,7 +189,12 @@ async def report_reelusage(request: Request, year: int | None = None):
         join oc_tables_row_cells_number cn on cn.column_id=cw.id and cn.row_id=ct.row_id
         where t.title='3D Printing Log'
         group by 1 order by 1 desc"""
-    return execute_fetchall(query)
+    # data = execute_fetchall(query)
+    # headers = [{"text": "Reel", "value": "REEL"}, {"text": "Reel Usage (g)", "value": "USAGE"}]
+    # response_dict = {"headers": headers, "data": data}
+    # json_obj = json.dumps(response_dict, indent=4, sort_keys=True, default=str)
+    # return json_obj
+
 
 @APP.get("/data")
 async def report_data(request: Request, year: int | None = None):
