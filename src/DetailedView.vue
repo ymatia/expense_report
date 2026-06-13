@@ -17,7 +17,7 @@
 		},
 		data () {
 			return {
-				jsonData: null				
+				jsonData
 			}
 		},
 		mounted () {
