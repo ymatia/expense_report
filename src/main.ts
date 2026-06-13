@@ -14,7 +14,7 @@ import 'vue3-easy-data-table/dist/style.css';
 const routes = [
   { path: '/financeoverview', component: FinanceOverviewView },
   { path: '/detailed', component: DetailedView },
-  { path: '/reelusage', component: ReeUsageView },
+  { path: '/reelusage', component: ReelUsageView },
 ]
 
 export const router = createRouter({
