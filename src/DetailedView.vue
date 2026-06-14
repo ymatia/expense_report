@@ -17,10 +17,10 @@
 		},
 		data () {
 			return {
-				jsonData
+				jsonData: {}
 			}
 		},
-		mounted () {
+		created () {
 			axios
 				.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data`))
 				.then(response => (this.jsonData = response))
