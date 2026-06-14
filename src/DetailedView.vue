@@ -24,6 +24,8 @@
 			axios
 				.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data`))
 				.then(response => (this.jsonData = response))
+			str = JSON.stringify(this.jsonData,null,2)
+			console.log(str)
 		}
 	}
 </script>
