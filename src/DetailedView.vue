@@ -20,7 +20,7 @@
 		},
 		data () {
 			return {
-				jsonData: {}
+				jsonData
 			}
 		},
 		created () {
