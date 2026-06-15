@@ -153,7 +153,7 @@ def get_report_payload(year: int) -> dict[str, Any]:
     # }
 
 
-def enabled_handler(enabled: bool, nc: NextcloudApp) -> str:
+def enabled_handler(enabled: bool, nc: AsyncNextcloudApp) -> str:
     print(f"enabled={enabled}")
     if enabled:
         nc.ui.resources.set_script("top_menu", "report", "../../../../../nextcloud/index.php/apps/app_api/proxy/expense-report/js/expense-report-main")
