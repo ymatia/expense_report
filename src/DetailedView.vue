@@ -11,6 +11,9 @@
 	import EasyDataTable from "vue3-easy-data-table";
 	import "vue3-easy-data-table/dist/style.css";
 
+	var jsonData = {};
+	var str = "";
+
 	export default {
 		components: {
 			EasyDataTable
