@@ -27,8 +27,8 @@
 				.then(function (response) {
 					console.log(response.data);
 					var jsonData = JSON.parse(response.data);
-					this.headers = jsonData.headers;
-					this.data = jsonData.data;
+					this.headers = jsonData["headers"];
+					this.data = jsonData["data"];
 				})
 		}
 	}
