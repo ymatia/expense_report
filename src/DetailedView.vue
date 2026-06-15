@@ -17,8 +17,8 @@
 		},
 		data () {
 			return {
-				headers:[],
-				data:[]
+				headers: [],
+				items: []
 			}
 		},
 		created () {
@@ -27,8 +27,11 @@
 				.then(function (response) {
 					console.log(response.data);
 					var jsonData = JSON.parse(response.data);
+					console.log(jsonData);
+					console.log(jsonData["headers"]);
+					console.log(jsonData["items"]);
 					this.headers = jsonData["headers"];
-					this.data = jsonData["data"];
+					this.items = jsonData["items"];
 				})
 		}
 	}

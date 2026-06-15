@@ -134,7 +134,7 @@ def get_report_payload(year: int) -> dict[str, Any]:
     report_dict = _to_records(report["monthly"])
     report_headers_dict = { 
         "headers": [ {"text": x, "value": x} for x in report["monthly"].columns ],
-        "data": report_dict
+        "items": report_dict
     }
     json_obj = json.dumps(report_headers_dict, indent=4, sort_keys=True, default=str)
     return json_obj
