@@ -15,13 +15,11 @@
 		components: {
 			EasyDataTable
 		},
-		data () {
-			return {
-				headers: [],
-				items: []
-			}
-		},
-		created () {
+		data: () => ({
+			headers: [],
+			items: []
+		}),
+		created() {
 			axios
 				.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data`))
 				.then(function (response) {
