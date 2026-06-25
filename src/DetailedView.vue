@@ -1,6 +1,6 @@
 <template>
-	<div id="DetailedView">
-		<EasyDataTable :headers="headers" :items="items" />
+	<div style="margin-top: 20px;" id="DetailedView">
+		<EasyDataTable :headers="headers" :items="items" :theme-color="#f48225" loading />
 	</div>
 </template>
 
