@@ -87,6 +87,7 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     monthly = df.where(df["Category"] == "Actual")  # Filter to include only Actual
     monthly = monthly[["Month", "Sub-Category", "Amount"]].groupby(["Month", "Sub-Category"], as_index=False).sum()  # Group by
     monthly = monthly.pivot_table(columns="Sub-Category", index="Month", aggfunc="sum", fill_value=0)
+    monthly = monthly.round(2)
     print(monthly)  # Debug
     print(monthly.dtypes)  # Debug
     monthly["Sum"] = monthly[list(monthly.columns)].sum(axis=1)

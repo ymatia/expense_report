@@ -7,6 +7,7 @@
     		table-class-name="customize-table"
 			:loading="loading"
 			alternating 
+			body-text-direction="right"
 		/>
 	</div>
 </template>
