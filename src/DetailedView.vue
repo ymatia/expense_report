@@ -1,5 +1,5 @@
 <template>
-	<div style="margin-top: 20px;" id="DetailedView">
+	<div id="DetailedView">
 		<EasyDataTable :headers="headers" :items="items" :theme-color="#f48225" loading />
 	</div>
 </template>
@@ -39,3 +39,9 @@
 		}
 	}
 </script>
+
+<style>
+	#DetailedView {
+		margin-top: 20px;
+	}
+</style>
