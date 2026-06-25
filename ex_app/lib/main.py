@@ -87,13 +87,13 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     monthly = df.where(df["Category"] == "Actual")  # Filter to include only Actual
     monthly = monthly[["Month", "Sub-Category", "Amount"]].groupby(["Month", "Sub-Category"], as_index=False).sum()  # Group by
     monthly = monthly.pivot_table(columns="Sub-Category", index="Month", aggfunc="sum", fill_value=0)
-    monthly = monthly.round(2)
     print(monthly)  # Debug
     print(monthly.dtypes)  # Debug
     monthly["Sum"] = monthly[list(monthly.columns)].sum(axis=1)
     monthly.loc["Average"] = monthly.mean()
     monthly = monthly.reset_index()
-    monthly.columns = ['_'.join(header).upper() for header in monthly.columns if header != ""]  # cleanup the headers
+    monthly.columns = [' '.join(header).replace("AMOUNT","").rstrip().title() for header in monthly.columns if header != ""]  # cleanup the headers
+    monthly = monthly.round(0)  # Round the numbers
 
     by_category = df[["Category", "Sub-Category", "Amount"]].groupby(["Category", "Sub-Category"], as_index=False).sum()
 
