@@ -1,6 +1,6 @@
 <template>
 	<div id="DetailedView">
-		<EasyDataTable :headers="headers" :items="items" :theme-color="#f48225" loading />
+		<EasyDataTable :headers="headers" :items="items" theme-color="#f48225" loading />
 	</div>
 </template>
 
