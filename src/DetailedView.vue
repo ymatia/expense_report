@@ -25,7 +25,7 @@
 		data: () => ({
 			headers: [],
 			items: [],
-			loading: ref(false)
+			loading: true
 		}),
 		methods: {
 			loadData: function() {
@@ -39,7 +39,7 @@
 						console.log(jsonData["items"]);
 						this.headers = jsonData["headers"];
 						this.items = jsonData["items"];
-						this.loading.value = false;
+						this.loading = false;
 				})
 			}
 		},
