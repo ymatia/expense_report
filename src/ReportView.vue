@@ -1,5 +1,5 @@
 <template>
-	Reel Usage
+	Report Name: {{ $route.params.reportName }}
 </template>
 
 <script>

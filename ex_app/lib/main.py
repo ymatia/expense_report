@@ -92,7 +92,7 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     monthly["Sum"] = monthly[list(monthly.columns)].sum(axis=1)
     monthly.loc["Average"] = monthly.mean()
     monthly = monthly.reset_index()
-    monthly.columns = [' '.join(header).replace("Amount","").rstrip() for header in monthly.columns if header != ""]  # cleanup the headers
+    monthly.columns = [' '.join(header).replace("Amount","").lstrip().rstrip() for header in monthly.columns if header != ""]  # cleanup the headers
     monthly = monthly.round(0)  # Round the numbers
 
     by_category = df[["Category", "Sub-Category", "Amount"]].groupby(["Category", "Sub-Category"], as_index=False).sum()
