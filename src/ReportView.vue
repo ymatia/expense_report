@@ -34,11 +34,7 @@
 				axios
 					.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data?reportName=${this.$route.params.reportName}`))
 					.then((response) => {
-						console.log(response.data);
 						var jsonData = JSON.parse(response.data);
-						console.log(jsonData);
-						console.log(jsonData["headers"]);
-						console.log(jsonData["items"]);
 						this.headers = jsonData["headers"];
 						this.items = jsonData["items"];
 						this.loading = false;

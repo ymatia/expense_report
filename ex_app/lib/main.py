@@ -19,7 +19,6 @@ from nc_py_api import AsyncNextcloudApp  # , execute_fetchall
 from nc_py_api.ex_app import AppAPIAuthMiddleware, LogLvl, nc_app, run_app, set_handlers
 from fastapi.staticfiles import StaticFiles
 
-# pd.options.future.infer_string = False  # resolve issue in Pandas 3.0 of exact type casting
 
 def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
     global session
@@ -28,15 +27,27 @@ def _request_json(url: str, payload: dict[str, Any] = None) -> list[Any]:
         "OCS-APIRequest": "true",
         'accept': 'application/json',
     }
+    auth=requests.auth.HTTPBasicAuth(os.environ["NC_USERNAME"], os.environ["NC_PASSWORD"]) if 'NC_PASSWORD' in os.environ else None
 
     if payload is None:
-        r = session.get(f"{nc_url}{url}", headers=headers, timeout=60)
+        r = session.get(f"{nc_url}{url}", headers=headers, auth=auth, timeout=60)
     else:
-        r = session.post(f"{nc_url}{url}", headers=headers, json=payload, timeout=60)
+        r = session.post(f"{nc_url}{url}", headers=headers, auth=auth, json=payload, timeout=60)
 
     if r.status_code not in (200, 201, 204):
         raise RuntimeError(f"Request failed ({r.status_code}) for {nc_url}{url}: {r.text}")
     return json.loads(r.text)
+
+
+def _fetch_table_id(table_name: str) -> int:
+    tables_url = "/apps/tables/api/1/tables"
+    tables = _request_json(tables_url)
+    table_id = None
+    for t in tables:
+        if t["title"] == table_name:
+            table_id = t["id"]
+            break
+    return table_id
 
 
 def _fetch_selection_values(table_id: int) -> tuple[dict[int, str], dict[int, str]]:
@@ -60,10 +71,17 @@ def _fetch_rows(table_id: int) -> pd.DataFrame:
     return pd.DataFrame(np.vstack(rows[1:]), columns=rows[0])
 
 
-def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> dict[str, pd.DataFrame]:
+def _to_records(dataframe: pd.DataFrame) -> list[dict[str, Any]]:
+    if dataframe.empty:
+        return []
+    converted = dataframe.where(pd.notna(dataframe), None)
+    return converted.to_dict(orient="records")
+
+
+def _build_report_data(year: int) -> dict[str, pd.DataFrame]:
+    facts_table_id = _fetch_table_id("Expenses")
     categories, sub_categories = _fetch_selection_values(facts_table_id)
     df = _fetch_rows(facts_table_id)
-    debts_df = _fetch_rows(debts_table_id)
 
     df.where(df["Date"].str.startswith(str(year)), inplace=True)
     df.dropna(inplace=True)
@@ -76,9 +94,6 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     df["Amount"] = df.apply(lambda row: float(row["Amount"]), axis=1)
     df["Amount"] = df["Amount"].astype(float)
 
-    debts_df.dropna(inplace=True)
-    debts_df["How much €"] = debts_df.apply(lambda row: float(row["How much €"]), axis=1)
-
     df["Month"] = df.apply(
         lambda row: row["Date"][:7] if row["Date"] is not None and isinstance(row["Date"], str) else row,
         axis=1,
@@ -87,8 +102,6 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     monthly = df.where(df["Category"] == "Actual")  # Filter to include only Actual
     monthly = monthly[["Month", "Sub-Category", "Amount"]].groupby(["Month", "Sub-Category"], as_index=False).sum()  # Group by
     monthly = monthly.pivot_table(columns="Sub-Category", index="Month", aggfunc="sum", fill_value=0)
-    print(monthly)  # Debug
-    print(monthly.dtypes)  # Debug
     monthly["Sum"] = monthly[list(monthly.columns)].sum(axis=1)
     monthly.loc["Average"] = monthly.mean()
     monthly = monthly.reset_index()
@@ -103,55 +116,57 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     cash_flow = cash_flow[["Date", "Description", "Amount"]]
     cash_flow.dropna(subset=["Date"], inplace=True)
 
-    cash_flow_default = cash_flow.query(
-        r'not(Description.str.contains("\(01\)") or Description.str.contains("\(DKB\)") or Description.str.contains("\(Praxis\)"))'
-    )
+    cash_flow_default = cash_flow.query(r'not(Description.str.contains(r"\(01\)") or Description.str.contains(r"\(DKB\)") or Description.str.contains(r"\(Praxis\)"))')
     cash_flow_01 = cash_flow[cash_flow["Description"].str.contains(r"\(01\)")]
-
-    debts_summary = debts_df[["Who", "How much €"]].groupby("Who", as_index=False).sum()
-
     return {
-        "all_expenses": df,
         "monthly": monthly,
         "category": by_category,
         "cash_flow": cash_flow_default,
-        "cash_flow_01": cash_flow_01,
-        "debts": debts_df,
-        "debts_summary": debts_summary,
+        "cash_flow_01": cash_flow_01
     }
 
 
-def _to_records(dataframe: pd.DataFrame) -> list[dict[str, Any]]:
-    if dataframe.empty:
-        return []
-    converted = dataframe.where(pd.notna(dataframe), None)
-    return converted.to_dict(orient="records")
+def _build_debts_data() -> dict[str, pd.DataFrame]:
+    debts_table_id = _fetch_table_id("Debts")
+    debts_df = _fetch_rows(debts_table_id)
+    debts_df.dropna(inplace=True)
+    debts_df["How much €"] = debts_df.apply(lambda row: float(row["How much €"]), axis=1)
+    debts_summary = debts_df[["Who", "How much €"]].groupby("Who", as_index=False).sum()
+    return {
+            "debts": debts_df,
+            "debts_summary": debts_summary
+    }
 
 
-def get_report_payload(year: int) -> dict[str, Any]:
-    facts_table_id = int(os.getenv("NC_FACTS_TABLE_ID", "6"))
-    debts_table_id = int(os.getenv("NC_DEBTS_TABLE_ID", "10"))
-    report = _build_report_data(year, facts_table_id, debts_table_id)
-    report_dict = _to_records(report["monthly"])
+def _build_reel_data() -> dict[str, pd.DataFrame]:
+    reel_table_id = _fetch_table_id("3D Printing Log")
+    reel_df = _fetch_rows(reel_table_id)
+    reel_df.dropna(inplace=True)
+    reel_df["Weight"] = reel_df.apply(lambda row: float(row["Weight"]), axis=1)
+    reel_summary_df = reel_df[["Reel", "Weight"]].groupby("Reel", as_index=False).sum()
+    return {
+        "reel_usage": reel_summary_df
+    }
+
+
+def get_report_payload(reportName:str) -> dict[str, Any]:
+    if reportName.startswith("debts"):
+        report = _build_debts_data()
+    elif reportName.startswith("reel"):
+        report = _build_reel_data()
+    else:
+        report_year = datetime.today().year
+        if reportName.endswith("_PrevYear"):
+            report_year = report_year - 1
+            reportName = reportName.replace("_PrevYear","")
+        report = _build_report_data(report_year)
+    report_dict = _to_records(report[reportName])
     report_headers_dict = { 
-        "headers": [ {"text": x, "value": x} for x in report["monthly"].columns ],
+        "headers": [ {"text": x, "value": x} for x in report[reportName].columns ],
         "items": report_dict
     }
     json_obj = json.dumps(report_headers_dict, indent=4, sort_keys=True, default=str)
     return json_obj
-    # return {
-    #     "year": year,
-    #     "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    #     "tables": {
-    #         "all_expenses": _to_records(report["all_expenses"]),
-    #         "monthly": _to_records(report["monthly"]),
-    #         "category": _to_records(report["category"]),
-    #         "cash_flow": _to_records(report["cash_flow"]),
-    #         "cash_flow_01": _to_records(report["cash_flow_01"]),
-    #         "debts": _to_records(report["debts"]),
-    #         "debts_summary": _to_records(report["debts_summary"]),
-    #     },
-    # }
 
 
 def enabled_handler(enabled: bool, nc: AsyncNextcloudApp) -> str:
@@ -172,30 +187,12 @@ async def lifespan(app: FastAPI):
     set_handlers(app, enabled_handler)
     yield
 
-
 APP = FastAPI(lifespan=lifespan)
 APP.add_middleware(AppAPIAuthMiddleware)
 
 # Serve static files (JS, CSS, icons, etc.)
 APP.mount("/img", StaticFiles(directory="../img"), name="img")
-APP.mount("/js", StaticFiles(directory="../js"), name="js")
-
-@APP.get("/reelusage")
-async def report_reelusage(request: Request, year: int | None = None):
-    query = """select ct.value as REEL, sum(cn.value) as USAGE
-        from oc_tables_tables t
-        join oc_tables_columns cr on cr.table_id=t.id and cr.title='Reel'
-        join oc_tables_columns cw on cw.table_id=t.id and cw.title='Weight'
-        join oc_tables_row_cells_text ct on ct.column_id=cr.id
-        join oc_tables_row_cells_number cn on cn.column_id=cw.id and cn.row_id=ct.row_id
-        where t.title='3D Printing Log'
-        group by 1 order by 1 desc"""
-    # data = execute_fetchall(query)
-    # headers = [{"text": "Reel", "value": "REEL"}, {"text": "Reel Usage (g)", "value": "USAGE"}]
-    # response_dict = {"headers": headers, "data": data}
-    # json_obj = json.dumps(response_dict, indent=4, sort_keys=True, default=str)
-    # return json_obj
-
+# APP.mount("/js", StaticFiles(directory="../js"), name="js")
 
 @APP.get("/data")
 async def report_data(request: Request, reportName: str = "monthly"):
@@ -207,15 +204,11 @@ async def report_data(request: Request, reportName: str = "monthly"):
     session = requests.Session()
     session.cookies.update(cookies)
 
-    # default for report_year
-    report_year = datetime.today().year
-    
     # Fetch the data and reply back
     # try:
     print(f"Report Name: {reportName}")
-    payload = await to_thread(get_report_payload, report_year)
-    # nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
-    print(f"Loaded report data for {report_year}")
+    payload = await to_thread(get_report_payload, reportName)
+    print(f"Loaded report data for {reportName}")
     print(payload)
     return payload
     # except Exception as exc:
@@ -226,4 +219,8 @@ async def report_data(request: Request, reportName: str = "monthly"):
 
 if __name__ == "__main__":
     os.chdir(Path(__file__).parent)
-    run_app("main:APP", log_level="info")
+    if 'NC_PASSWORD' in os.environ:
+        session = requests.Session()
+        print(get_report_payload("debts_summary"))
+    else:
+        run_app("main:APP", log_level="info")
