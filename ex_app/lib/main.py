@@ -92,7 +92,7 @@ def _build_report_data(year: int, facts_table_id: int, debts_table_id: int) -> d
     monthly["Sum"] = monthly[list(monthly.columns)].sum(axis=1)
     monthly.loc["Average"] = monthly.mean()
     monthly = monthly.reset_index()
-    monthly.columns = [' '.join(header).replace("Amount","").lstrip().rstrip() for header in monthly.columns if header != ""]  # cleanup the headers
+    monthly.columns = [' '.join(header).replace("Amount","").lstrip().rstrip() for header in monthly.columns if header != ""]  # cleanup the headers after the pivoting
     monthly = monthly.round(0)  # Round the numbers
 
     by_category = df[["Category", "Sub-Category", "Amount"]].groupby(["Category", "Sub-Category"], as_index=False).sum()
@@ -198,7 +198,7 @@ async def report_reelusage(request: Request, year: int | None = None):
 
 
 @APP.get("/data")
-async def report_data(request: Request, year: int | None = None):
+async def report_data(request: Request, reportName: str = "monthly"):
     global session
     # Store the current cookies for future REST API calls
     cookies_str = request.headers.get("Cookie")
@@ -212,6 +212,7 @@ async def report_data(request: Request, year: int | None = None):
     
     # Fetch the data and reply back
     # try:
+    print(f"Report Name: {reportName}")
     payload = await to_thread(get_report_payload, report_year)
     # nc.log(LogLvl.INFO, f"Loaded report data for {report_year}")
     print(f"Loaded report data for {report_year}")
