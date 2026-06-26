@@ -208,7 +208,7 @@ async def report_data(request: Request, reportName: str = "monthly"):
     session.cookies.update(cookies)
 
     # default for report_year
-    report_year = year or datetime.today().year
+    report_year = datetime.today().year
     
     # Fetch the data and reply back
     # try:
