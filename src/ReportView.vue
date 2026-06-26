@@ -32,7 +32,7 @@
 		methods: {
 			loadData: function() {
 				axios
-					.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data?reportName=${route.params.id}`))
+					.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data?reportName=${this.$route.params.reportName}`))
 					.then((response) => {
 						console.log(response.data);
 						var jsonData = JSON.parse(response.data);
