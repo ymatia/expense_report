@@ -31,20 +31,6 @@
 			<image>ymatia/expense-report</image>
 			<image-tag>latest</image-tag>
 		</docker-install>
-		<environment-variables>
-			<variable>
-				<name>NC_FACTS_TABLE_ID</name>
-				<display-name>Facts table ID</display-name>
-				<description>Nextcloud Tables table id for expenses.</description>
-				<default>6</default>
-			</variable>
-			<variable>
-				<name>NC_DEBTS_TABLE_ID</name>
-				<display-name>Debts table ID</display-name>
-				<description>Nextcloud Tables table id for debts.</description>
-				<default>10</default>
-			</variable>
-		</environment-variables>
 		<routes>
 			<route>
 				<url>.*</url>
