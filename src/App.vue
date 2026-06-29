@@ -38,8 +38,15 @@
 					table-class-name="customize-table"
 					:loading="loading"
 					alternating 
-					body-text-direction="right"
-				/>
+					header-text-direction="center"
+    				body-text-direction="left"
+				>
+					<template #item-Extra="item">
+						<div style="text-align: right;">
+							{{ item.Extra }}
+						</div>
+					</template>
+				</EasyDataTable>
 			</div>
 		</NcAppContent>
 	</NcContent>
@@ -79,11 +86,12 @@
 				mdiCheckPath: mdiCheck,
 				headers: [],
 				items: [],
-				loading: true
+				loading: false
 			}
 		},
 		methods: {
 			loadData: function(reportName) {
+				this.loading = true;
 				axios
 					.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data?reportName=${reportName}`))
 					.then((response) => {
