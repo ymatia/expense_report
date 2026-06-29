@@ -30,9 +30,9 @@
 			loading: true
 		}),
 		methods: {
-			loadData: function() {
+			loadData: function(report_name) {
 				axios
-					.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data?reportName=${this.$route.params.reportName}`))
+					.get(generateUrl(`${APP_API_PROXY_URL_PREFIX}/${EX_APP_ID}/data?reportName=${report_name}`))
 					.then((response) => {
 						var jsonData = JSON.parse(response.data);
 						this.headers = jsonData["headers"];
@@ -41,8 +41,8 @@
 				})
 			}
 		},
-		mounted() {
-			this.loadData();
+		computed() {
+			this.loadData(this.$route.params.reportName);
 		}
 	}
 </script>

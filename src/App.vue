@@ -18,10 +18,10 @@
 				<NcAppNavigationItem name="Finance Overview Previous Year" to="/report/monthly_PrevYear">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
 				</NcAppNavigationItem>
-				<NcAppNavigationItem name="Cash Flow 01" to="/report/debts">
+				<NcAppNavigationItem name="Debts" to="/report/debts">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
 				</NcAppNavigationItem>
-				<NcAppNavigationItem name="Cash Flow 01" to="/report/debts_summary">
+				<NcAppNavigationItem name="Debts Summary" to="/report/debts_summary">
 					<template #icon><svg-icon type="mdi" :path="mdiCheckPath"></svg-icon></template>
 				</NcAppNavigationItem>
 				<NcAppNavigationItem name="Reel Usage" to="/report/reel_usage">

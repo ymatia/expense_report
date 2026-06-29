@@ -109,6 +109,7 @@ def _build_report_data(year: int) -> dict[str, pd.DataFrame]:
     monthly = monthly.round(0)  # Round the numbers
 
     by_category = df[["Category", "Sub-Category", "Amount"]].groupby(["Category", "Sub-Category"], as_index=False).sum()
+    by_category = by_category.round(0)  # Round the numbers
 
     today = datetime.today().strftime("%Y-%m-%d")
     last_day = (datetime.today() + timedelta(days=30)).strftime("%Y-%m-%d")
@@ -117,7 +118,9 @@ def _build_report_data(year: int) -> dict[str, pd.DataFrame]:
     cash_flow.dropna(subset=["Date"], inplace=True)
 
     cash_flow_default = cash_flow.query(r'not(Description.str.contains(r"\(01\)") or Description.str.contains(r"\(DKB\)") or Description.str.contains(r"\(Praxis\)"))')
+    cash_flow_default = cash_flow_default.round(0)  # Round the numbers
     cash_flow_01 = cash_flow[cash_flow["Description"].str.contains(r"\(01\)")]
+    cash_flow_01 = cash_flow_01.round(0)  # Round the numbers
     return {
         "monthly": monthly,
         "category": by_category,
@@ -132,6 +135,8 @@ def _build_debts_data() -> dict[str, pd.DataFrame]:
     debts_df.dropna(inplace=True)
     debts_df["How much €"] = debts_df.apply(lambda row: float(row["How much €"]), axis=1)
     debts_summary = debts_df[["Who", "How much €"]].groupby("Who", as_index=False).sum()
+    debts_df = debts_df.round(0)  # Round the numbers
+    debts_summary = debts_summary.round(0)  # Round the numbers
     return {
             "debts": debts_df,
             "debts_summary": debts_summary
@@ -144,6 +149,7 @@ def _build_reel_data() -> dict[str, pd.DataFrame]:
     reel_df.dropna(inplace=True)
     reel_df["Weight"] = reel_df.apply(lambda row: float(row["Weight"]), axis=1)
     reel_summary_df = reel_df[["Reel", "Weight"]].groupby("Reel", as_index=False).sum()
+    reel_summary_df = reel_summary_df.round(0)  # Round the numbers
     return {
         "reel_usage": reel_summary_df
     }
@@ -209,7 +215,7 @@ async def report_data(request: Request, reportName: str = "monthly"):
     print(f"Report Name: {reportName}")
     payload = await to_thread(get_report_payload, reportName)
     print(f"Loaded report data for {reportName}")
-    print(payload)
+    # print(payload)
     return payload
     # except Exception as exc:
     #     # nc.log(LogLvl.ERROR, f"Failed to load report data: {exc}")
