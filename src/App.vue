@@ -41,9 +41,9 @@
 					header-text-direction="center"
     				body-text-direction="left"
 				>
-					<template #item-Extra="item">
+					<template v-for="col in right_align_col" :key="col" #[`item-${col}`]="item">
 						<div style="text-align: right;">
-							{{ item.Extra }}
+							{{ item[col] }}
 						</div>
 					</template>
 				</EasyDataTable>
@@ -86,6 +86,7 @@
 				mdiCheckPath: mdiCheck,
 				headers: [],
 				items: [],
+				right_align_col: [],
 				loading: false
 			}
 		},
@@ -98,6 +99,7 @@
 						var jsonData = JSON.parse(response.data);
 						this.headers = jsonData["headers"];
 						this.items = jsonData["items"];
+						this.right_align_col = jsonData["right_align_col"] ?? [];
 						this.loading = false;
 				})
 			}

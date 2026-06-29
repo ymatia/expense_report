@@ -166,10 +166,12 @@ def get_report_payload(reportName:str) -> dict[str, Any]:
             report_year = report_year - 1
             reportName = reportName.replace("_PrevYear","")
         report = _build_report_data(report_year)
+    right_align_col = report[reportName].select_dtypes(include="number").columns.tolist()
     report_dict = _to_records(report[reportName])
     report_headers_dict = { 
         "headers": [ {"text": x, "value": x} for x in report[reportName].columns ],
-        "items": report_dict
+        "items": report_dict,
+        "right_align_col": right_align_col,
     }
     json_obj = json.dumps(report_headers_dict, indent=4, sort_keys=True, default=str)
     return json_obj
