@@ -16,8 +16,7 @@ None
 
 ## Optional environment variables
 
-- `NC_FACTS_TABLE_ID` (default: `6`)
-- `NC_DEBTS_TABLE_ID` (default: `10`)
+None
 
 ## Local run
 
@@ -28,6 +27,8 @@ python main.py
 ```
 
 ## Guides
+
 Nextcloud Developer Guide: https://docs.nextcloud.com/server/latest/developer_manual/exapp_development/development_overview/ExAppOverview.html
 Nextcloud and Vue: https://nextcloud-vue-components.netlify.app/
 Material Design Icons: https://pictogrammers.com/library/mdi/
+Vue.js: https://vuejs.org/guide/introduction.html

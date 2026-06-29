@@ -118,8 +118,11 @@ def _build_report_data(year: int) -> dict[str, pd.DataFrame]:
     cash_flow.dropna(subset=["Date"], inplace=True)
 
     cash_flow_default = cash_flow.query(r'not(Description.str.contains(r"\(01\)") or Description.str.contains(r"\(DKB\)") or Description.str.contains(r"\(Praxis\)"))')
+    # Add 'Cumulative' column to cash_flow_default aggregating Amount row-by-row
+    cash_flow_default["Cumulative"] = cash_flow_default["Amount"].cumsum()
     cash_flow_default = cash_flow_default.round(0)  # Round the numbers
     cash_flow_01 = cash_flow[cash_flow["Description"].str.contains(r"\(01\)")]
+    cash_flow_01["Cumulative"] = cash_flow_01["Amount"].cumsum()
     cash_flow_01 = cash_flow_01.round(0)  # Round the numbers
     return {
         "monthly": monthly,
@@ -229,6 +232,6 @@ if __name__ == "__main__":
     os.chdir(Path(__file__).parent)
     if 'NC_PASSWORD' in os.environ:
         session = requests.Session()
-        print(get_report_payload("debts_summary"))
+        print(get_report_payload("cash_flow_01"))
     else:
         run_app("main:APP", log_level="info")
